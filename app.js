@@ -11,7 +11,7 @@ const SEQ = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "
 const DIV_NEG = ["#a8302f", "#e34948", "#ef9a92", "#f6cfca"]; // od nejsilnějšího
 const DIV_POS = ["#cde2fb", "#86b6ef", "#2a78d6", "#184f95"]; // od nejslabšího
 const MID = { light: "#e4e3df", dark: "#4a4a46" };
-const NODATA = { light: "#ffffff", dark: "#222222" };
+const NODATA = { light: "#c9c9c9", dark: "#3a3a3a" }; // okrsek bez hodnoty (šedý)
 const MIN_KOREL = 8;
 
 const S = {
@@ -555,12 +555,14 @@ function gradBar(colors) {
   return el("div", { class: "gb", style: `background:linear-gradient(90deg,${colors.join(",")})` });
 }
 
-function scaleLegend(sc, fmt, title) {
+function scaleLegend(sc, fmt, title, bezDat = 0) {
   const labels = sc.div ? [fmt(sc.center - sc.m), fmt(sc.center), fmt(sc.center + sc.m)] : [fmt(sc.min), fmt((sc.min + sc.max) / 2), fmt(sc.max)];
   return el("div", { class: "scale" },
     el("span", null, title),
     el("div", null, gradBar(sc.colors), el("div", { class: "lab" }, labels.map(l => el("span", null, l)))),
-    el("span", null, el("i", { style: `display:inline-block;width:14px;height:10px;border:1px solid var(--line);background:${NODATA[S.theme]};vertical-align:middle;margin-right:4px` }), "bez dat"));
+    bezDat > 0 && el("span", { title: "Okrsky, pro které hodnotu nelze spočítat: zvláštní okrsky nebo okrsky, které se od roku 2022 změnily (u změn)." },
+      el("i", { style: `display:inline-block;width:14px;height:10px;border-radius:2px;background:${NODATA[S.theme]};vertical-align:middle;margin-right:4px` }),
+      `šedě = bez hodnoty (${bezDat} ${bezDat === 1 ? "okrsek" : bezDat < 5 ? "okrsky" : "okrsků"})`));
 }
 
 /* Vrstva okrsků: ids, value(i) → barva přes scale, tooltip(i), click(i). */
@@ -681,7 +683,8 @@ function secMapa(V, sec) {
       const i = V.idx.find(j => ok.id[j] === l.feature.properties.id);
       l.off("mousemove"); l.on("mousemove", e => tip.show(e.originalEvent, ...tipOf(i)));
     });
-    mapEl.nextSibling.replaceChildren(scaleLegend(sc, fmt, lab));
+    const bez = V.idx.filter(i => (ok.zvlastni[i] && !showZv(key)) || vals.get(i) == null || !isFinite(vals.get(i))).length;
+    mapEl.nextSibling.replaceChildren(scaleLegend(sc, fmt, lab, bez));
     // výchozí panel: nejsilnější a nejslabší okrsky
     const ranked = (showZv(key) ? V.idx : idxNoZv).filter(i => vals.get(i) != null).sort((a, b) => vals.get(b) - vals.get(a));
     const li = i => el("li", null, `${okrsekLabel(V, i)} — `, el("b", null, key === "p" || key === "u" ? pct(vals.get(i)) : pp(vals.get(i))));
@@ -1109,7 +1112,8 @@ function secDvaListky(V, sec) {
   const sc = divScale([...diff.values()], 0);
   const mapEl = el("div", { class: "map" });
   const panel = el("div", { class: "side-panel" });
-  const legend = scaleLegend(sc, v => (v > 0 ? "+" : v < 0 ? "−" : "") + NF1.format(Math.abs(v)), "Rozdíl MČ − město (p. b.)");
+  const legend = scaleLegend(sc, v => (v > 0 ? "+" : v < 0 ? "−" : "") + NF1.format(Math.abs(v)), "Rozdíl MČ − město (p. b.)",
+    [...diff.values()].filter(v => v == null || !isFinite(v)).length);
   sec.append(el("div", { class: "map-wrap" }, el("div", null, mapEl, legend), panel));
   const map = newMap(mapEl);
   okrskyLayer(map, V, V.idx, i => sc.color(diff.get(i)), i => {
