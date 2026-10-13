@@ -1260,8 +1260,25 @@ function secCoDelat(V, sec) {
       el("div", { class: "tile" }, el("span", { class: "lbl" }, "Odhad našich voličů"), el("span", { class: "val" }, int(m.volicu_odhad)),
         el("span", { class: "d" }, `${NF1.format(m.krizku_na_obalku)} křížku na obálku`)));
     sec.append(tiles);
-    if (m.chybi_do_dalsiho != null) auto.push(`Další mandát by přinesl zisk zhruba ${int(m.chybi_do_dalsiho_volici)} voličů hlasujících celou kandidátku (při jinak stejných výsledcích ostatních).`);
-    if (m.rezerva != null) auto.push(m.rezerva_volici < 300 ? `Pozor: poslední mandát byl těsný — stačilo by o ${int(m.rezerva_volici)} voličů méně a byl by ztracen.` : `Rezerva posledního mandátu je ${int(m.rezerva_volici)} voličů.`);
+    // Těsnost posuzujeme vůči počtu našich voličů (≤ 3 % = velmi těsně, ≤ 10 % = těsně).
+    const podil = v => v / Math.max(1, m.volicu_odhad);
+    const pctV = v => `≈ ${NF1.format(podil(v) * 100)} % našich voličů`;
+    if (m.chybi_do_dalsiho != null) {
+      const v = m.chybi_do_dalsiho_volici, n = m.mandatu + 1;
+      auto.push(podil(v) <= 0.03
+        ? `K ${n}. mandátu chybělo velmi málo — jen asi ${int(v)} voličů hlasujících celou kandidátku (${pctV(v)}). Reálný cíl pro příští volby.`
+        : podil(v) <= 0.10
+          ? `K ${n}. mandátu chybělo asi ${int(v)} voličů hlasujících celou kandidátku (${pctV(v)}) — dosažitelné.`
+          : `K ${n}. mandátu by bylo potřeba asi ${int(v)} voličů hlasujících celou kandidátku navíc (${pctV(v)}).`);
+    }
+    if (m.rezerva != null) {
+      const v = m.rezerva_volici, n = m.mandatu;
+      auto.push(podil(v) <= 0.03
+        ? `Pozor: ${n}. mandát byl velmi těsný — přišli bychom o něj při ztrátě jen asi ${int(v)} voličů (${pctV(v)}).`
+        : podil(v) <= 0.10
+          ? `Rezerva ${n}. mandátu je asi ${int(v)} voličů (${pctV(v)}) — není velká.`
+          : `${n}. mandát je bezpečný: rezerva asi ${int(v)} voličů (${pctV(v)}).`);
+    }
   }
   // Magistrát: MČ pod průměrem Brna
   if (V.route.kind === "mag" && src.mc) {
