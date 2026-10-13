@@ -639,7 +639,7 @@ function secMapa(V, sec) {
   const ctrl = el("div", { class: "ctrl" });
   const sel = el("select", { "aria-label": "Kandidátka" },
     V.strany.filter(s => s.p >= 1 || s.ours).map(s => el("option", { value: s.por, selected: s.ours ? true : null }, s.zkratka)));
-  const seg = segmented([["p", "Podíl 2026"], ["d", "Změna od 2022"], ["u", "Účast"], ["du", "Změna účasti"]], "p");
+  const seg = segmented([["p", "Podíl 2026"], ["d", "Změna od 2022"], ["u", "Účast"], ["du", "Změna účasti"], ["w", "Vítěz okrsku"]], "p");
   ctrl.append(el("label", null, "Kandidátka", sel), seg.el);
   sec.append(ctrl);
   const mapEl = el("div", { class: "map" });
@@ -668,8 +668,64 @@ function secMapa(V, sec) {
     const fmt = key === "p" || key === "u" ? v => pct(v) : v => (v > 0 ? "+" : v < 0 ? "−" : "") + NF1.format(Math.abs(v));
     return { sc, fmt, lab, s, key };
   }
+  function apply(colorOf, tipOf) {
+    if (!layer) layer = okrskyLayer(map, V, V.idx, colorOf, tipOf, i => panel.replaceChildren(okrsekPanel(V, i)));
+    else layer.recolor(colorOf);
+    layer.eachLayer(l => {
+      const i = V.idx.find(j => ok.id[j] === l.feature.properties.id);
+      l.off("mousemove"); l.on("mousemove", e => tip.show(e.originalEvent, ...tipOf(i)));
+    });
+  }
+  // Pořadí kandidátek v okrsku (podle podílu hlasů)
+  const poradi = i => V.strany.map(s => ({ s, p: ok.platne[i] ? ok.hlasy[s.por][i] / ok.platne[i] * 100 : 0 })).sort((a, b) => b.p - a.p);
+  function drawVitez() {
+    const P = new Map(V.idx.map(i => [i, poradi(i)]));
+    const colorOf = i => ok.zvlastni[i] ? NODATA[S.theme] : P.get(i)[0].s.color;
+    const nasePoradi = i => P.get(i).findIndex(x => x.s.ours);
+    const tipOf = i => {
+      const r = P.get(i), k = nasePoradi(i);
+      return [el("div", null, el("b", null, r[0].s.zkratka), ` ${pct(r[0].p)} · 2. ${r[1].s.zkratka} ${pct(r[1].p)}`),
+        el("div", null, okrsekLabel(V, i)),
+        el("div", { class: "m" }, `${V.nase.zkratka}: ${k + 1}. místo, ${pct(r[k].p)}`)];
+    };
+    apply(colorOf, tipOf);
+    const pocty = new Map();
+    for (const i of idxNoZv) { const w = P.get(i)[0].s; pocty.set(w, (pocty.get(w) || 0) + 1); }
+    const leg = [...pocty.entries()].sort((a, b) => b[1] - a[1]);
+    mapEl.nextSibling.replaceChildren(el("div", { class: "legend" },
+      el("span", null, "Vítěz okrsku:"),
+      leg.map(([w, n]) => el("span", null, el("i", { class: "sw", style: `background:${w.color};width:12px;height:12px;border-radius:2px` }), w.ours ? el("b", null, `${w.zkratka} (${n})`) : `${w.zkratka} (${n})`))));
+    const vyhra = idxNoZv.filter(i => nasePoradi(i) === 0).sort((a, b) => (P.get(b)[0].p - P.get(b)[1].p) - (P.get(a)[0].p - P.get(a)[1].p));
+    const druzi = idxNoZv.filter(i => nasePoradi(i) === 1).sort((a, b) => (P.get(a)[0].p - P.get(a)[1].p) - (P.get(b)[0].p - P.get(b)[1].p));
+    panel.replaceChildren(el("div", null,
+      el("h3", null, `Kde jsme vyhráli (${vyhra.length})`),
+      vyhra.length ? el("ol", { style: "margin:4px 0 0;padding-left:20px" }, vyhra.slice(0, 15).map(i => el("li", null, `${okrsekLabel(V, i)} — `,
+        el("b", null, pct(P.get(i)[0].p)), el("span", { class: "muted" }, ` (náskok ${NF1.format(P.get(i)[0].p - P.get(i)[1].p)} p. b. před ${P.get(i)[1].s.zkratka})`))))
+        : el("p", { class: "muted" }, "V žádném okrsku jsme nebyli první."),
+      vyhra.length > 15 && el("p", { class: "muted" }, `…a dalších ${vyhra.length - 15} (viz tabulka pod mapou).`),
+      el("h3", { style: "margin-top:12px" }, `Kde jsme byli druzí (${druzi.length})`),
+      el("ol", { style: "margin:4px 0 0;padding-left:20px" }, druzi.slice(0, 10).map(i => el("li", null, `${okrsekLabel(V, i)} — `,
+        el("span", { class: "muted" }, `na ${P.get(i)[0].s.zkratka} chybělo ${NF1.format(P.get(i)[0].p - P.get(i)[1].p)} p. b.`)))),
+      el("p", { class: "muted", style: "margin-top:8px" }, "Seřazeno podle náskoku, resp. podle toho, jak málo chybělo.")));
+    const rows = V.idx.filter(i => !ok.zvlastni[i]).map(i => {
+      const r = P.get(i), k = nasePoradi(i);
+      return { i, nazev: okrsekLabel(V, i), vitez: r[0].s.zkratka, vp: r[0].p, nk: k + 1, np: r[k].p,
+        rozdil: k === 0 ? r[0].p - r[1].p : r[k].p - r[0].p };
+    });
+    tv.replaceChildren(el("details", { class: "tv" }, el("summary", null, `Tabulka vítězů okrsků (${rows.length})`),
+      table([
+        { key: "nazev", label: "Okrsek" },
+        { key: "vitez", label: "Vítěz" },
+        { key: "vp", label: "Podíl vítěze", num: true, fmt: v => pct(v) },
+        { key: "nk", label: "Naše pořadí", num: true, fmt: v => `${v}.` },
+        { key: "np", label: "Náš podíl", num: true, fmt: v => pct(v) },
+        { key: "rozdil", label: "Náskok / ztráta", num: true, fmt: v => pp(v) },
+      ], rows, { sortKey: "nk", asc: true, rowClass: r => r.nk === 1 ? "ours" : "" })));
+  }
   function draw() {
     const por = +sel.value, key = seg.value;
+    sel.disabled = key === "w";
+    if (key === "w") { drawVitez(); return; }
     vals = new Map(V.idx.map(i => [i, metric(i, key, por)]));
     const { sc, fmt, lab, s } = legendAndPanel();
     const colorOf = i => ok.zvlastni[i] && !showZv(key) ? NODATA[S.theme] : sc.color(vals.get(i));
@@ -677,12 +733,7 @@ function secMapa(V, sec) {
       el("div", null, el("b", null, key === "p" || key === "u" ? pct(vals.get(i), 2) : pp(vals.get(i), 2)), " ", el("span", { class: "m" }, lab)),
       el("div", null, okrsekLabel(V, i)),
       el("div", { class: "m" }, `${int(vol(ok, i))} voličů`)];
-    if (!layer) layer = okrskyLayer(map, V, V.idx, colorOf, tipOf, i => panel.replaceChildren(okrsekPanel(V, i)));
-    else { layer.recolor(colorOf); layer.off("mousemove"); }
-    layer.eachLayer(l => {
-      const i = V.idx.find(j => ok.id[j] === l.feature.properties.id);
-      l.off("mousemove"); l.on("mousemove", e => tip.show(e.originalEvent, ...tipOf(i)));
-    });
+    apply(colorOf, tipOf);
     const bez = V.idx.filter(i => (ok.zvlastni[i] && !showZv(key)) || vals.get(i) == null || !isFinite(vals.get(i))).length;
     mapEl.nextSibling.replaceChildren(scaleLegend(sc, fmt, lab, bez));
     // výchozí panel: nejsilnější a nejslabší okrsky
