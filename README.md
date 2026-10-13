@@ -18,9 +18,9 @@ Pro **magistrát**, **magistrát v každé z 29 MČ** a **naše kandidátky v 15
 Přepínač **přepočítat zvláštní okrsky** nahradí počet voličů v okrscích 23001 a 23018
 (Brno-střed, evidenční adresy na úřadě) odhadem z účasti sousedních okrsků.
 
-Interní sekce (**Co mohlo být lepší**, **Konkurence**, komentáře) se zobrazí jen tehdy,
-když vedle stránky existuje adresář `interni/` – ten je v `.gitignore` a na GitHub Pages
-se nedostane. Lokálně:
+Sekce **Co mohlo být lepší** a **Konkurence** (včetně komentářů a podezřelých zápisů okrskových
+komisí) čtou data z adresáře `interni/`. Ten je součástí repozitáře, takže jsou na webu veřejně
+viditelné. Lokálně:
 
 ```bash
 python3 -m http.server 8765   # pak http://127.0.0.1:8765/
