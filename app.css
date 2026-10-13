@@ -228,3 +228,4 @@ details.tv[open] summary{margin-bottom:8px}
   .db2 .db-row,.db2 .db-axis{grid-template-columns:120px minmax(0,1fr) 120px}
   .db2 .who{display:none}
 }
+.concl{font-size:18px;line-height:1.5;max-width:900px;margin:6px 0 0}

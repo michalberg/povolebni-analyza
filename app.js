@@ -1031,7 +1031,7 @@ function secDvaListky(V, sec) {
   const Mz = S.celky[BRNO];
   const magNase = Mz.strany.find(s => s.por === Mz.nase);
   sec.append(el("p", { class: "lead" },
-    `Ve stejné volební místnosti dostali voliči dva lístky. Srovnáváme podíl naší kandidátky do zastupitelstva MČ (${V.nase.zkratka}) s podílem ${magNase.zkratka} do zastupitelstva města ve stejných okrscích — a u ostatních stran totéž. Na konci je odhad, voliči kterých stran nás v MČ pravděpodobně volili navíc.`));
+    `Ve stejné volební místnosti dostali voliči dva lístky. Srovnáváme podíl naší kandidátky do zastupitelstva MČ (${V.nase.zkratka}) s podílem ${magNase.zkratka} do zastupitelstva města ve stejných okrscích a odhadujeme, voliči kterých stran nás v MČ volili navíc.`));
   const G = skupinyDvaListky(V);
   const nase = G.find(x => x.g === "nase");
   const w = V.idx.map(i => ok.zvlastni[i] ? 0 : ok.platne[i]);
@@ -1041,36 +1041,11 @@ function secDvaListky(V, sec) {
     el("div", { class: "tile" }, el("span", { class: "lbl" }, "Rozdíl"), el("span", { class: "val" }, pp(nase.D)),
       el("span", { class: "d" }, nase.D > 0 ? "místní kandidátka táhne víc" : "celoměstská značka táhne víc"))));
 
-  // 1) Odkud jsou hlasy navíc — rozdíl MČ − město po skupinách + korelace s naším rozdílem
+  // 1) Závěr: odhad, odkud přišli naši voliči v MČ (regrese) + okresní korelace pro kontrolu
   for (const x of G) x.r = x.g === "nase" ? null : wcorr(nase.d, x.d, w);
+  const rel = G.filter(x => x.g !== "nase" && x.r != null).sort((a, b) => a.r - b.r);
+  sec.append(regreseDvaListky(V, rel[0] && rel[0].r < -0.2 ? rel[0] : null));
   const ostatni = G.filter(x => x.g !== "nase");
-  const maxAbs = Math.max(...G.map(x => Math.abs(x.D)), 0.5);
-  sec.append(el("h3", { style: "margin:14px 0 4px" }, "Rozdíl podílů: MČ − město"));
-  sec.append(el("p", { class: "note", style: "margin:0 0 10px" },
-    "Rozdíl podílu MČ − město za celou MČ (p. b.). Strany vlevo mají na místním lístku méně než na celoměstském. Korelace r: jak úzce rozdíl strany souvisí po okrscích s naším rozdílem (záporná = kde máme v MČ víc navíc, ona má víc méně)."));
-  const rows = el("div", { class: "dv" });
-  for (const x of [...G].sort((a, b) => a.D - b.D)) {
-    const wd = Math.abs(x.D) / maxAbs * 50;
-    const row = el("div", { class: "dv-row" + (x.g === "nase" ? " ours" : "") },
-      el("div", { class: "nm" }, el("i", { class: "sw", style: `background:${x.color}` }), el("span", null, x.label),
-        !x.mc.length ? el("em", null, " (jen město)") : !x.mag.length ? el("em", null, " (jen MČ)") : null),
-      el("div", { class: "dv-tr" }, el("div", { class: "dv-mid" }),
-        el("div", { class: "dv-b", style: `background:${x.color};${x.D >= 0 ? `left:50%;width:${wd}%` : `left:${50 - wd}%;width:${wd}%`}` })),
-      el("div", { class: "v" }, el("b", null, pp(x.D)), el("span", { class: "m" }, ` MČ ${pct(x.L)} · město ${pct(x.M)}`)),
-      el("div", { class: "rr" }, x.r == null ? "" : `r ${r2(x.r)}`));
-    row.addEventListener("pointermove", ev => tip.show(ev, el("div", null, el("b", null, pp(x.D)), " ", x.label), el("div", { class: "m" }, x.detail),
-      x.r != null && el("div", { class: "m" }, `Korelace s naším rozdílem po okrscích: ${r2(x.r)}`)));
-    row.addEventListener("pointerleave", tip.hide);
-    rows.append(row);
-  }
-  sec.append(rows);
-  const txt = [];
-  const rel = ostatni.filter(x => x.r != null).sort((a, b) => a.r - b.r);
-  if (rel.length && rel[0].r < -0.2) txt.push(el("li", null, "Po okrscích náš náskok nejvíc souvisí s poklesem ", el("b", null, rel[0].label),
-    ` na místním lístku (r ${r2(rel[0].r)}).`));
-  txt.push(el("li", { class: "m" }, "Sloupce výše jen ukazují, o kolik je která strana na místním lístku silnější či slabší — rozdíly se navzájem vyrovnávají, ale neříkají, kdo k komu přešel (např. voliči stran, které v MČ nekandidují, se rozdělí mezi všechny). Odhad přesunů je níže."));
-  sec.append(el("div", { class: "text", style: "margin-top:10px" }, el("ul", null, txt)));
-  sec.append(regreseDvaListky(V));
 
   // 2) Okrsky: MČ vs. město pro naši kandidátku + kdo je v okrsku na MČ lístku slabší
   sec.append(el("h3", { style: "margin:18px 0 4px" }, "Po okrscích"));
@@ -1139,13 +1114,13 @@ function bls(A, y, b0, it) {
   return b;
 }
 
-function regreseDvaListky(V) {
+function regreseDvaListky(V, korel) {
   const ok = V.ok, Mz = S.celky[BRNO], Mo = Mz.okrsky;
   const mpos = new Map(Mo.id.map((id, i) => [id, i]));
   const ids = V.idx.filter(i => !ok.zvlastni[i] && ok.platne[i] > 0);
-  const box = el("div", { style: "margin-top:16px" }, el("h3", { style: "margin:0 0 4px" }, "Odhad: odkud přišli naši voliči v MČ"));
+  const box = el("div", { style: "margin-top:8px" }, el("h3", { style: "margin:0 0 4px" }, "Odkud přišli naši voliči v MČ"));
   if (ids.length < 15) {
-    box.append(el("p", { class: "note" }, `MČ má jen ${ids.length} okrsků — odhad přesunů by nebyl spolehlivý, proto ho nepočítáme.`));
+    box.append(el("p", { class: "note" }, `MČ má jen ${ids.length} ${ids.length < 5 ? "okrsky" : "okrsků"} — odhad, voliči kterých stran nás v MČ volili navíc, by nebyl spolehlivý, proto ho nepočítáme. Srovnání po okrscích je níže.`));
     return box;
   }
   const mag = Mz.strany.filter(s => s.pct >= 0.5);
@@ -1168,15 +1143,37 @@ function regreseDvaListky(V) {
   const R2 = 1 - y.reduce((a, v, k) => a + (v - pred[k]) ** 2, 0) / y.reduce((a, v) => a + (v - ym) ** 2, 0);
   const rows = mag.map((s, j) => ({ s, beta: b[j] * 100, lo: q(j, 0.05) * 100, hi: q(j, 0.95) * 100, sh: share[j] * 100, pb: b[j] * share[j] * 100, ours: s.por === Mz.nase }))
     .sort((a, c) => c.pb - a.pb);
-  const top = rows.filter(r => !r.ours && r.pb >= 0.2);
-  box.append(el("p", { class: "note", style: "margin:0 0 8px" },
-    `Regrese přes ${ids.length} okrsků: náš podíl v MČ vysvětlujeme podíly stran na lístku do města. Výsledek = jaká část voličů dané strany (do města) volila v MČ naši kandidátku. Model vysvětluje ${int(R2 * 100)} % rozdílů mezi okrsky. Předpokládá, že se voliči strany chovají ve všech okrscích podobně — je to odhad, interval ukazuje nejistotu.`));
-  box.append(el("div", { class: "text" }, el("ul", null,
-    el("li", null, `Voliči ${rows.find(r => r.ours).s.zkratka} do města volili v MČ naši kandidátku zhruba z ${int(rows.find(r => r.ours).beta)} %.`),
-    top.length
-      ? el("li", null, "Navíc nás v MČ pravděpodobně volili: ", ...top.slice(0, 4).flatMap((r, k) => [k ? "; " : "", el("b", null, r.s.zkratka),
-        ` ~${int(r.beta)} % jejich voličů (90% interval ${int(r.lo)}–${int(r.hi)} %, ≈ ${NF1.format(r.pb)} p. b.)`]), ".")
-      : el("li", null, "Žádná jiná strana nepřispívá výrazněji — náš místní výsledek odpovídá voličům naší celoměstské kandidátky."))));
+  const our = rows.find(r => r.ours);
+  const Lsh = y.reduce((a, v, k) => a + v * pl[k], 0) / P * 100;
+  if (R2 < 0.6 || our.beta < 50 || Lsh > 1.6 * our.sh) {
+    box.append(el("p", { class: "concl" },
+      Lsh > 1.6 * our.sh
+        ? `Naše kandidátka v MČ (${pct(Lsh)}) je mnohem silnější než ${our.s.zkratka} do města (${pct(our.sh)}) — volí ji lidé napříč stranami, takže z okrskových dat nejde spolehlivě odhadnout, od kterých stran voliči přišli.`
+        : "Z okrskových dat tu nejde spolehlivě odhadnout, voliči kterých stran nás v MČ volili navíc."));
+    box.append(el("p", { class: "note", style: "margin:4px 0 8px" },
+      `Regrese přes ${ids.length} okrsků vysvětluje jen ${int(R2 * 100)} % rozdílů mezi okrsky${our.beta < 50 ? ` a vychází nepravděpodobně (voliči ${our.s.zkratka} by nás v MČ volili jen z ${int(our.beta)} %)` : ""}, proto závěr neuvádíme. Srovnání po okrscích níže platí.`));
+    return box;
+  }
+  const hlavni = rows.filter(r => !r.ours && r.pb >= 1);
+  const mensi = rows.filter(r => !r.ours && r.pb >= 0.1 && r.pb < 1);
+  const nula = rows.filter(r => !r.ours && r.beta < 1 && r.sh >= 2).sort((a, c) => c.sh - a.sh);
+  const join = arr => arr.reduce((acc, x, k) => [...acc, k ? (k === arr.length - 1 ? " a " : ", ") : "", x], []);
+  const veta = [];
+  veta.push(our.beta >= 85 ? `Skoro všichni voliči ${our.s.zkratka} nás volili i v MČ` : `Voliči ${our.s.zkratka} nás v MČ volili zhruba z ${int(our.beta)} %`);
+  if (hlavni.length) veta.push(", přidalo se ", ...join(hlavni.map(r => el("span", null, `asi ${int(r.beta)} % voličů `, el("b", null, r.s.zkratka), ` (odhad +${NF1.format(r.pb)} p. b.)`))));
+  if (mensi.length) veta.push(hlavni.length ? " a menší podíl " : ", přidal se menší podíl voličů ", ...join(mensi.map(r => el("b", null, r.s.zkratka))));
+  if (nula.length) veta.push(", zatímco u ", ...join(nula.slice(0, 5).map(r => el("b", null, r.s.zkratka))), " vyšel podíl 0");
+  veta.push(".");
+  const hl = hlavni[0] || mensi[0];
+  if (korel && hl) {
+    const shoda = korel.mc.concat(korel.mag).some(x => x.por === hl.s.por) || korel.mag.some(x => x.skupina === hl.s.skupina);
+    veta.push(shoda
+      ? ` To odpovídá okrskové korelaci: kde máme v MČ víc navíc, mají ${korel.label} na místním lístku víc méně (r ${r2(korel.r)}).`
+      : ` Okrsková korelace ukazuje spíš na ${korel.label} (r ${r2(korel.r)}) — závěr je proto méně jistý.`);
+  }
+  box.append(el("p", { class: "concl" }, ...veta));
+  box.append(el("p", { class: "note", style: "margin:4px 0 8px" },
+    `Odhad z regrese přes ${ids.length} okrsků: náš podíl v MČ vysvětlujeme podíly stran na lístku do města (model vysvětluje ${int(R2 * 100)} % rozdílů mezi okrsky). Předpokládá, že se voliči jedné strany chovají ve všech okrscích podobně — je to odhad, ne údaj o konkrétních voličích. Intervaly nejistoty jsou v tabulce.`));
   box.append(el("details", { class: "tv" }, el("summary", null, "Tabulka odhadu pro všechny strany"),
     table([
       { key: "nm", label: "Strana (do města)", sortVal: r => r.s.zkratka, cell: r => r.s.zkratka },
