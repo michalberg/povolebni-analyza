@@ -742,7 +742,7 @@ function osobniHlasy(KF, idx) {
 async function secKandidati(V, sec) {
   sec.append(el("p", { class: "lead" },
     "V komunálních volbách volič buď označí celou kandidátku (hlas dostanou všichni její kandidáti), nebo dá křížky jednotlivým kandidátům, případně obojí. ",
-    el("b", null, "Osobní hlasy"), " jsou proto počítány jako hlasy kandidáta nad mediánem jeho kandidátky v každém okrsku — přibližně tolik voličů ho zakřížkovalo jménem. Kliknutím na kandidáta zobrazíte, kde získával."));
+    el("b", null, "Osobní hlasy"), " jsou proto počítány jako hlasy kandidáta nad mediánem jeho kandidátky v každém okrsku — přibližně tolik voličů ho zakřížkovalo jménem. Kandidáta vyberte v rozbalovacím seznamu vedle mapy (nebo kliknutím na řádek tabulky)."));
   const ctrl = el("div", { class: "ctrl" });
   const sel = el("select", { "aria-label": "Kandidátka" },
     V.strany.filter(s => s.kandidatu > 0).map(s => el("option", { value: s.por, selected: s.ours ? true : null }, `${s.zkratka} (${pct(s.p)})`)));
@@ -773,6 +773,13 @@ async function secKandidati(V, sec) {
     const mapEl = el("div", { class: "map" });
     const panel = el("div", { class: "side-panel" });
     const legendBox = el("div");
+    // Výběr kandidáta: řazeno podle osobních hlasů, s číslem na kandidátce
+    const candSel = el("select", { class: "cand-sel", "aria-label": "Kandidát" },
+      el("optgroup", { label: "Podle osobních hlasů (v závorce), ✓ = mandát" },
+        byE.map(r => el("option", { value: r.ci }, `${r.c}. ${r.jmeno.replace(/^((?:[A-Za-zÁ-ž]+\.\s?)+)\s*/, "").replace(/,.*$/, "")} (${int(r.E)})${r.mandat ? " ✓" : ""}`))));
+    candSel.addEventListener("change", () => showCand(rows[+candSel.value]));
+    const side = el("div", { class: "side-col" },
+      el("label", { class: "cand-lbl" }, el("span", null, "Kandidát"), candSel), panel);
     const map = newMap(mapEl);
     let layer = null, current = null;
 
@@ -808,6 +815,7 @@ async function secKandidati(V, sec) {
         el("ol", { style: "margin:0;padding-left:20px" }, top.map(i => el("li", null, `${okrsekLabel(V, i)} — `, el("b", null, int(extra[r.ci].get(i))), el("span", { class: "muted" }, ` (index ${int(idxv.get(i))})`)))),
         el("p", { class: "muted", style: "margin-top:10px" }, "Index 100 = kandidát má v okrsku stejný podíl osobních hlasů jako na celém území; 200 = dvojnásobek. U malých okrsků je index nestabilní.")));
       for (const tr of tbl.querySelectorAll("tr.sel")) tr.classList.remove("sel");
+      candSel.value = String(r.ci);
     }
 
     const tbl = table([
@@ -823,7 +831,7 @@ async function secKandidati(V, sec) {
     ], rows, { limit: 15, onRow: (r, tr) => { showCand(r); tr.classList.add("sel"); mapEl.scrollIntoView({ behavior: "smooth", block: "center" }); } });
 
     body.replaceChildren(
-      el("div", { class: "map-wrap" }, el("div", null, mapEl, legendBox), panel),
+      el("div", { class: "map-wrap" }, el("div", null, mapEl, legendBox), side),
       el("h3", { style: "margin:18px 0 6px" }, `Kandidáti: ${s.nazev}`),
       el("p", { class: "note", style: "margin:0 0 8px" }, "„mandát ↑“ = kandidát získal mandát, přestože podle pořadí na kandidátce by nebyl zvolen (posun díky preferenčním hlasům). ✓ ve sloupci 2022 = tehdy zvolen."),
       tbl);
@@ -1021,11 +1029,11 @@ function secDvaListky(V, sec) {
 function interniCelek(V) {
   return S.interni && S.interni.celky[V.z.kod];
 }
-function komentar(key, sekce) {
+function komentar(key, sekce, nadpis = "Komentář") {
   const k = S.interni && S.interni.komentare[key];
   const t = k && k[sekce];
   if (!t) return null;
-  return el("div", { class: "komentar" }, el("h4", null, "Komentář"), mdText(t));
+  return el("div", { class: "komentar" }, el("h4", null, nadpis), mdText(t));
 }
 function mdText(t) {
   // Minimální Markdown: odstavce, odrážky „- “, **tučně**.
@@ -1059,6 +1067,8 @@ function secCoDelat(V, sec) {
   const key = viewKey(V);
   const kom = komentar(key, "co-delat");
   if (kom) sec.append(kom);
+  const anom = komentar(key, "anomalie", "Podezřelé zápisy okrskových komisí");
+  if (anom) sec.append(anom);
   const src = V.route.kind === "magmc" ? Ib : I;
   if (!src) { sec.append(el("p", { class: "note" }, "Interní data pro tento celek chybí.")); return; }
   const auto = [];

@@ -150,6 +150,10 @@ details.tv[open] summary{margin-bottom:8px}
 .map{height:560px;border-radius:8px;background:var(--soft);z-index:1}
 @media (max-width:640px){.map{height:420px}}
 .leaflet-container{font-family:var(--font);background:var(--soft)}
+.side-col{display:flex;flex-direction:column;gap:8px;min-width:0}
+.side-col .side-panel{max-height:510px}
+.cand-lbl{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.cand-sel{width:100%;font-size:15px;font-weight:700;color:var(--fg);background:var(--bg);border:2px solid var(--accent);border-radius:8px;padding:8px 10px;cursor:pointer;text-transform:none;letter-spacing:0}
 .side-panel{background:var(--soft);border-radius:8px;padding:14px;font-size:14px;max-height:560px;overflow:auto}
 .side-panel h3{margin:0 0 2px;font-size:18px;font-weight:800}
 .side-panel .muted{color:var(--muted)}
