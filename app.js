@@ -751,7 +751,8 @@ function osobniHlasy(KF, idx) {
 async function secKandidati(V, sec) {
   sec.append(el("p", { class: "lead" },
     "V komunálních volbách volič buď označí celou kandidátku (hlas dostanou všichni její kandidáti), nebo dá křížky jednotlivým kandidátům, případně obojí. Kdo označí stranu a zároveň dá křížky kandidátům jiných stran, dává hlas jen horní části kandidátky — hlasy proto s pořadím přirozeně ubývají. ",
-    el("b", null, "Osobní hlasy"), " proto počítáme v každém okrsku jako hlasy kandidáta nad základem jeho okolí na kandidátce (dolní čtvrtina hlasů kandidátů do 5 míst nad ním a pod ním) — přibližně tolik voličů ho zakřížkovalo jménem. U prvního místa se srovnává s místy 2–6, odhad je tam proto mírně nadsazený. Kandidáta vyberte v rozbalovacím seznamu vedle mapy (nebo kliknutím na řádek tabulky)."));
+    el("b", null, "Osobní hlasy"), " proto počítáme v každém okrsku jako hlasy kandidáta nad základem jeho okolí na kandidátce (dolní čtvrtina hlasů kandidátů do 5 míst nad ním a pod ním) — přibližně tolik voličů ho zakřížkovalo jménem. U prvního místa se srovnává s místy 2–6, odhad je tam proto mírně nadsazený.  Kandidáta vyberte v rozbalovacím seznamu vedle mapy (nebo kliknutím na řádek tabulky).",
+    el("br"), el("b", null, "Jde stále jen o odhad:"), " úřední data neříkají, kolik křížků dostal kandidát jménem a kolik díky označení strany — to se z výsledků dá jen přibližně dopočítat. Čísla ber jako orientační srovnání kandidátů a okrsků, ne jako přesný počet preferenčních hlasů."));
   const ctrl = el("div", { class: "ctrl" });
   const sel = el("select", { "aria-label": "Kandidátka" },
     V.strany.filter(s => s.kandidatu > 0).map(s => el("option", { value: s.por, selected: s.ours ? true : null }, `${s.zkratka} (${pct(s.p)})`)));
@@ -784,7 +785,7 @@ async function secKandidati(V, sec) {
     const legendBox = el("div");
     // Výběr kandidáta: řazeno podle čísla na kandidátce
     const candSel = el("select", { class: "cand-sel", "aria-label": "Kandidát" },
-      el("optgroup", { label: "Pořadí na kandidátce · osobní hlasy v závorce · ✓ = mandát" },
+      el("optgroup", { label: "Pořadí na kandidátce · odhad osobních hlasů v závorce · ✓ = mandát" },
         [...rows].sort((a, b) => a.c - b.c).map(r => el("option", { value: r.ci }, `${r.c}. ${r.jmeno.replace(/^((?:[A-Za-zÁ-ž]+\.\s?)+)\s*/, "").replace(/,.*$/, "")} (${int(r.E)})${r.mandat ? " ✓" : ""}`))));
     candSel.addEventListener("change", () => showCand(rows[+candSel.value]));
     const side = el("div", { class: "side-col" },
@@ -802,13 +803,13 @@ async function secKandidati(V, sec) {
       const sc = divScale([...idxv.values()].map(v => v == null ? null : Math.log2(Math.max(v, 1) / 100)), 0, 1.5);
       const colorOf = i => idxv.get(i) == null ? NODATA[S.theme] : sc.color(Math.log2(Math.max(idxv.get(i), 1) / 100));
       const tipOf = i => [
-        el("div", null, el("b", null, int(extra[r.ci].get(i))), " osobních hlasů · index ", el("b", null, int(idxv.get(i)))),
+        el("div", null, "≈ ", el("b", null, int(extra[r.ci].get(i))), " osobních hlasů (odhad) · index ", el("b", null, int(idxv.get(i)))),
         el("div", null, okrsekLabel(V, i)),
         el("div", { class: "m" }, `${int(KF.kandidati[r.ci].okrsky[i])} hlasů celkem, kandidátka ${int(L.get(i))}`)];
       if (layer) map.removeLayer(layer);
       layer = okrskyLayer(map, V, V.idx, colorOf, tipOf, i => panel.replaceChildren(okrsekKandPanel(V, KF, extra, i)));
       legendBox.replaceChildren(el("div", { class: "scale" },
-        el("span", null, `Index osobních hlasů: ${r.jmeno}`),
+        el("span", null, `Index osobních hlasů (odhad): ${r.jmeno}`),
         el("div", null,
           el("div", { class: "sb" }, sc.colors.map(c => el("i", { style: `background:${c}` }))),
           el("div", { class: "lab" }, el("span", null, "≤ 35"), el("span", null, "100 = průměr"), el("span", null, "≥ 280")))));
@@ -816,11 +817,11 @@ async function secKandidati(V, sec) {
       panel.replaceChildren(el("div", null,
         el("h3", null, `${r.c}. ${r.jmeno}`),
         el("div", { class: "muted" }, [r.vek && `${r.vek} let`, r.povolani, r.prisl].filter(Boolean).join(" · ")),
-        el("div", { style: "margin-top:8px" }, `${int(r.h)} hlasů · ${int(r.E)} osobních · ${r.rankH}. podle hlasů`),
+        el("div", { style: "margin-top:8px" }, `${int(r.h)} hlasů · ≈ ${int(r.E)} osobních (odhad) · ${r.rankH}. podle hlasů`),
         r.mandat ? el("div", null, el("span", { class: "mand" }, "mandát"), r.preskok ? " · přeskočil(a) pořadí díky preferenčním hlasům" : "")
           : r.nahradnik ? el("div", { class: "muted" }, `${r.nahradnik}. náhradník`) : null,
         r.r2022 && el("div", { class: "muted", style: "margin-top:4px" }, `2022: ${r.r2022.c}. na kandidátce ${r.r2022.kandidatka}, ${int(r.r2022.hlasy)} hlasů${r.r2022.mandat ? ", mandát" : ""}`),
-        el("p", { style: "margin:10px 0 4px;font-weight:700" }, "Nejvíc osobních hlasů"),
+        el("p", { style: "margin:10px 0 4px;font-weight:700" }, "Nejvíc osobních hlasů (odhad)"),
         el("ol", { style: "margin:0;padding-left:20px" }, top.map(i => el("li", null, `${okrsekLabel(V, i)} — `, el("b", null, int(extra[r.ci].get(i))), el("span", { class: "muted" }, ` (index ${int(idxv.get(i))})`)))),
         el("p", { class: "muted", style: "margin-top:10px" }, "Index 100 = kandidát má v okrsku stejný podíl osobních hlasů jako na celém území; 200 = dvojnásobek. U malých okrsků je index nestabilní.")));
       for (const tr of tbl.querySelectorAll("tr.sel")) tr.classList.remove("sel");
@@ -831,7 +832,7 @@ async function secKandidati(V, sec) {
       { key: "c", label: "Č.", num: true },
       { key: "jmeno", label: "Kandidát", cell: r => [r.jmeno, el("span", { class: "small" }, [r.vek && `${r.vek} let`, r.povolani, r.prisl].filter(Boolean).join(" · "))] },
       { key: "h", label: V.full ? "Hlasy" : "Hlasy v MČ", num: true, fmt: int },
-      { key: "E", label: "Osobní", num: true, fmt: int },
+      { key: "E", label: "Osobní (odhad)", num: true, fmt: int },
       { key: "rankH", label: "Pořadí", num: true, fmt: v => `${v}.` },
       { key: "mandat", label: "Výsledek", sortVal: r => r.mandat ? 1000 - (r.poradi || 0) : r.nahradnik ? -r.nahradnik : -1000,
         cell: r => r.mandat ? el("span", { class: "mand" }, r.preskok ? "mandát ↑" : "mandát") : r.nahradnik ? el("span", { class: "mand n" }, `${r.nahradnik}. náhr.`) : "" },
@@ -856,7 +857,7 @@ function okrsekKandPanel(V, KF, extra, i) {
   return el("div", null,
     el("h3", null, okrsekLabel(V, i)),
     el("div", { class: "muted" }, `Kandidátka zde: ${int(KF.okrsky_hlasy[i])} hlasů`),
-    el("p", { style: "margin:10px 0 4px;font-weight:700" }, "Kdo zde získal nejvíc osobních hlasů"),
+    el("p", { style: "margin:10px 0 4px;font-weight:700" }, "Kdo zde získal nejvíc osobních hlasů (odhad)"),
     el("table", null, el("tbody", null, rows.map(r => el("tr", null,
       el("td", null, `${r.k.c}. ${r.k.jmeno}`), el("td", { class: "r" }, el("b", null, int(r.e))), el("td", { class: "r muted" }, int(r.h)))))));
 }

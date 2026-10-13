@@ -11,7 +11,7 @@ Pro **magistrát**, **magistrát v každé z 29 MČ** a **naše kandidátky v 15
 - výsledky a změna proti 2022 (srovnatelné kandidátky podle `nastupci.json`),
 - výsledky po městských částech (jen magistrát),
 - mapa okrsků – podíl, změna, účast, změna účasti,
-- přednostní hlasy – osobní hlasy kandidátů po okrscích (hlasy nad základem okolních míst na kandidátce),
+- přednostní hlasy – osobní hlasy kandidátů po okrscích (odhad: hlasy nad základem okolních míst na kandidátce),
 - MČ vs. magistrát – rozdíl mezi oběma lístky ve stejných okrscích (u MČ),
 - korelace podílů a změn mezi stranami po okrscích.
 
