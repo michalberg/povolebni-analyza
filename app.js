@@ -250,7 +250,7 @@ async function render(scrollTop) {
     ["kandidati", "Přednostní hlasy", secKandidati],
     V.route.kind === "mc" && ["dva-listky", "MČ vs. magistrát", secDvaListky],
     ["korelace", "Korelace", secKorelace],
-    S.interni && ["co-delat", "Co dělat příště", secCoDelat, true],
+    S.interni && ["co-delat", "Co mohlo být lepší", secCoDelat, true],
     S.interni && ["konkurence", "Konkurence", secKonkurence, true],
   ].filter(Boolean);
   app.append(heroBlock(V));
@@ -260,7 +260,7 @@ async function render(scrollTop) {
     } }, label))));
   for (const [id, label, fn, int] of sections) {
     const sec = el("section", { class: "card" + (int ? " int" : ""), id });
-    sec.append(el("h2", null, label, int ? el("span", { class: "badge" }, "interní") : null));
+    sec.append(el("h2", null, label));
     app.append(sec);
     try { await fn(V, sec); } catch (e) { console.error(e); sec.append(el("p", { class: "err" }, "Chyba při vykreslení: " + e.message)); }
     if (token !== renderToken) return;
