@@ -188,7 +188,6 @@ async function init() {
   const ii = await tryJSON("interni/index.json");
   if (ii) {
     S.interni = { index: ii, komentare: (await tryJSON("interni/komentare.json")) || {}, celky: {} };
-    $("#interniBadge").hidden = false;
   }
   const navMag = $("#navMag"), navMc = $("#navMc");
   for (const m of S.index.mc) navMag.append(el("option", { value: m.kod }, m.nazev));
@@ -255,11 +254,11 @@ async function render(scrollTop) {
   ].filter(Boolean);
   app.append(heroBlock(V));
   app.append(el("nav", { class: "toc", "aria-label": "Obsah stránky" },
-    sections.map(([id, label, , int]) => el("a", { href: `#${id}`, class: int ? "int" : null, onclick: ev => {
+    sections.map(([id, label, , int]) => el("a", { href: `#${id}`, onclick: ev => {
       ev.preventDefault(); document.getElementById(id).scrollIntoView({ behavior: "smooth" });
     } }, label))));
   for (const [id, label, fn, int] of sections) {
-    const sec = el("section", { class: "card" + (int ? " int" : ""), id });
+    const sec = el("section", { class: "card", id });
     sec.append(el("h2", null, label));
     app.append(sec);
     try { await fn(V, sec); } catch (e) { console.error(e); sec.append(el("p", { class: "err" }, "Chyba při vykreslení: " + e.message)); }
