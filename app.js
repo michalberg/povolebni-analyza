@@ -65,12 +65,6 @@ async function tryJSON(url) {
 
 function dltClass(v) { return v == null ? "na" : v > 0.05 ? "up" : v < -0.05 ? "dn" : "na"; }
 
-function median(a) {
-  if (!a.length) return 0;
-  const s = [...a].sort((x, y) => x - y), m = s.length >> 1;
-  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
-}
-
 function wcorr(x, y, w) {
   let n = 0, sw = 0, mx = 0, my = 0;
   for (let i = 0; i < x.length; i++) {
@@ -728,21 +722,36 @@ async function loadKand(kod, por) {
   return S.kand[k];
 }
 
+const OKNO = 5; // porovnání s kandidáty ±5 míst
+
+function q25(a) {
+  const s = [...a].sort((x, y) => x - y), k = (s.length - 1) * 0.25, f = Math.floor(k);
+  return s[f] + ((s[Math.min(f + 1, s.length - 1)] - s[f]) * (k - f));
+}
+
 function osobniHlasy(KF, idx) {
-  // Osobní hlasy = hlasy kandidáta nad mediánem kandidátky v okrsku (≈ křížky u jména).
-  const kand = KF.kandidati;
+  // Osobní hlasy = hlasy kandidáta nad „základem“ v okrsku. Základ = dolní čtvrtina
+  // hlasů kandidátů do ±5 míst na kandidátce (bez něj) — hlasy z označení strany
+  // s pořadím ubývají (smíšené lístky), proto se nesrovnává s celou kandidátkou.
+  // U krajních míst se okno posouvá (pro 1. místo = místa 2–6).
+  const kand = KF.kandidati, n = kand.length;
   const extra = kand.map(() => new Map());
   for (const i of idx) {
-    const med = median(kand.map(k => k.okrsky[i]));
-    kand.forEach((k, c) => extra[c].set(i, Math.max(0, k.okrsky[i] - med)));
+    const v = kand.map(k => k.okrsky[i]);
+    kand.forEach((k, c) => {
+      const lo = Math.max(0, Math.min(c - OKNO, n - 2 * OKNO - 1)), hi = Math.min(n, lo + 2 * OKNO + 1);
+      const nb = [];
+      for (let j = lo; j < hi; j++) if (j !== c) nb.push(v[j]);
+      extra[c].set(i, nb.length ? Math.max(0, v[c] - q25(nb)) : 0);
+    });
   }
   return extra;
 }
 
 async function secKandidati(V, sec) {
   sec.append(el("p", { class: "lead" },
-    "V komunálních volbách volič buď označí celou kandidátku (hlas dostanou všichni její kandidáti), nebo dá křížky jednotlivým kandidátům, případně obojí. ",
-    el("b", null, "Osobní hlasy"), " jsou proto počítány jako hlasy kandidáta nad mediánem jeho kandidátky v každém okrsku — přibližně tolik voličů ho zakřížkovalo jménem. Kandidáta vyberte v rozbalovacím seznamu vedle mapy (nebo kliknutím na řádek tabulky)."));
+    "V komunálních volbách volič buď označí celou kandidátku (hlas dostanou všichni její kandidáti), nebo dá křížky jednotlivým kandidátům, případně obojí. Kdo označí stranu a zároveň dá křížky kandidátům jiných stran, dává hlas jen horní části kandidátky — hlasy proto s pořadím přirozeně ubývají. ",
+    el("b", null, "Osobní hlasy"), " proto počítáme v každém okrsku jako hlasy kandidáta nad základem jeho okolí na kandidátce (dolní čtvrtina hlasů kandidátů do 5 míst nad ním a pod ním) — přibližně tolik voličů ho zakřížkovalo jménem. U prvního místa se srovnává s místy 2–6, odhad je tam proto mírně nadsazený. Kandidáta vyberte v rozbalovacím seznamu vedle mapy (nebo kliknutím na řádek tabulky)."));
   const ctrl = el("div", { class: "ctrl" });
   const sel = el("select", { "aria-label": "Kandidátka" },
     V.strany.filter(s => s.kandidatu > 0).map(s => el("option", { value: s.por, selected: s.ours ? true : null }, `${s.zkratka} (${pct(s.p)})`)));

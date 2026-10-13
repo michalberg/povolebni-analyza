@@ -11,7 +11,7 @@ Pro **magistrát**, **magistrát v každé z 29 MČ** a **naše kandidátky v 15
 - výsledky a změna proti 2022 (srovnatelné kandidátky podle `nastupci.json`),
 - výsledky po městských částech (jen magistrát),
 - mapa okrsků – podíl, změna, účast, změna účasti,
-- přednostní hlasy – osobní hlasy kandidátů po okrscích (hlasy nad mediánem kandidátky),
+- přednostní hlasy – osobní hlasy kandidátů po okrscích (hlasy nad základem okolních míst na kandidátce),
 - MČ vs. magistrát – rozdíl mezi oběma lístky ve stejných okrscích (u MČ),
 - korelace podílů a změn mezi stranami po okrscích.
 
@@ -42,7 +42,7 @@ navržených názvů okrsků.
 |---|---|
 | `data/index.json` | přehled celků a MČ |
 | `data/<kód>.json` | výsledky celku: kandidátky 2026/2022, okrsky (hlasy, voliči, 2022 přemapované na kandidátky 2026) |
-| `data/kandidati/<kód>-<pořadí>.json` | kandidáti a jejich hlasy po okrscích |
+| `data/kandidati/<kód>-<pořadí>.json` | kandidáti a jejich hlasy po okrscích (osobní hlasy = hlasy nad dolní čtvrtinou kandidátů ±5 míst na kandidátce, počítá se v prohlížeči) |
 | `data/okrsky.geojson` | polygony okrsků |
 | `data/ciselnik.json` | číselníky politické příslušnosti a navrhujících stran |
 | `nastupci.json` | ručně ověřené přiřazení kandidátek 2022 → 2026 (s poznámkami) |
