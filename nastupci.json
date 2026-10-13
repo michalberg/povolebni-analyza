@@ -1,0 +1,803 @@
+{
+ "_popis": "Které kandidátky 2022 odpovídají kandidátce 2026 (pro výpočet změny). Klíč = KODZASTUP, pak pořadí kandidátky 2026; z2022 = pořadí kandidátek 2022, pozn = vysvětlení zobrazené na webu. Návrh podle shody strany/složení/názvu a ověřený podle společných kandidátů; upravuje se ručně. srovnatelne=false: změna se zobrazí, ale nepoužije se k typologii okrsků (jiné složení kandidátky).",
+ "550973": {
+  "1": {
+   "nazev": "Brnoklidem",
+   "z2022": []
+  },
+  "2": {
+   "nazev": "Brno Brňankám a Brňanům! (B3!)",
+   "z2022": []
+  },
+  "3": {
+   "nazev": "ANO 2011",
+   "z2022": [
+    7
+   ]
+  },
+  "4": {
+   "nazev": "SPD a nezávislí",
+   "z2022": [
+    3
+   ]
+  },
+  "5": {
+   "nazev": "Lidovci a Starostové",
+   "z2022": [
+    4
+   ]
+  },
+  "6": {
+   "nazev": "Žít Zelené Brno (Zelení a Žít Brno)",
+   "z2022": [
+    1
+   ],
+   "pozn": "V roce 2022 společná kandidátka Pirátů, Zelených a Žít Brno — změnu čti opatrně.",
+   "srovnatelne": false
+  },
+  "7": {
+   "nazev": "Restart pro Brno",
+   "z2022": [
+    5
+   ]
+  },
+  "8": {
+   "nazev": "ODS a TOP 09",
+   "z2022": [
+    8
+   ]
+  },
+  "9": {
+   "nazev": "Piráti a Fakt Brno TU! pro Střed",
+   "z2022": [
+    6
+   ],
+   "pozn": "Srovnání jen s Fakt Brno 2022; Piráti tehdy kandidovali se Zelenými (10 současných kandidátů)."
+  },
+  "10": {
+   "nazev": "Brno-střed NAPLNO",
+   "z2022": []
+  },
+  "11": {
+   "nazev": "Za Lužánky",
+   "z2022": []
+  }
+ },
+ "550990": {
+  "1": {
+   "nazev": "ODS a TOP 09",
+   "z2022": [
+    10
+   ]
+  },
+  "2": {
+   "nazev": "Restart pro Brno",
+   "z2022": [
+    5
+   ]
+  },
+  "3": {
+   "nazev": "ANO 2011",
+   "z2022": [
+    7
+   ]
+  },
+  "4": {
+   "nazev": "SPD a nezávislí kandidáti s podporou Trikolory",
+   "z2022": [
+    6
+   ]
+  },
+  "5": {
+   "nazev": "Hnutí pro Žabiny",
+   "z2022": [
+    4
+   ]
+  },
+  "6": {
+   "nazev": "Piráti a Fakt Brno TU! pro Žabiny",
+   "z2022": [],
+   "pozn": "Nová sestava — většina pirátských kandidátů 2022 kandiduje za Za Lužánky."
+  },
+  "7": {
+   "nazev": "Za Lužánky",
+   "z2022": [
+    2
+   ],
+   "pozn": "13 kandidátů z kandidátky Pirátů 2022 → srovnání s Piráty 2022."
+  },
+  "8": {
+   "nazev": "Lidovci a Starostové",
+   "z2022": [
+    1
+   ]
+  },
+  "9": {
+   "nazev": "Zelení a osobnosti pro Žabovřesky",
+   "z2022": [
+    9
+   ]
+  }
+ },
+ "551007": {
+  "1": {
+   "nazev": "Za Lužánky",
+   "z2022": []
+  },
+  "2": {
+   "nazev": "Restart pro Brno",
+   "z2022": [
+    4
+   ]
+  },
+  "3": {
+   "nazev": "Královopolští patrioti s Brnoklidem",
+   "z2022": [
+    1
+   ]
+  },
+  "4": {
+   "nazev": "ODS a TOP 09",
+   "z2022": [
+    2
+   ]
+  },
+  "5": {
+   "nazev": "Piráti a Zelení TU! pro Královo Pole",
+   "z2022": [
+    8
+   ]
+  },
+  "6": {
+   "nazev": "Motoristé sobě",
+   "z2022": []
+  },
+  "7": {
+   "nazev": "ANO 2011",
+   "z2022": [
+    3
+   ]
+  },
+  "8": {
+   "nazev": "LIDOVCI A STAROSTOVÉ",
+   "z2022": [
+    6
+   ]
+  },
+  "9": {
+   "nazev": "SPD a nezávislí",
+   "z2022": [
+    5
+   ]
+  }
+ },
+ "551031": {
+  "1": {
+   "nazev": "ANO 2011",
+   "z2022": [
+    3
+   ]
+  },
+  "2": {
+   "nazev": "Brno Brňankám a Brňanům! (B3!)",
+   "z2022": []
+  },
+  "3": {
+   "nazev": "SPD a nezávislí",
+   "z2022": [
+    4
+   ]
+  },
+  "4": {
+   "nazev": "TÝM SEVER - SPOLEČNĚ TU! ODS + TOP 09 + Piráti + Fakt Brno",
+   "z2022": [
+    9,
+    7
+   ],
+   "pozn": "Srovnání s ODS + Piráti a Zelení 2022 (Zelení dnes kandidují v Hnutí SOL)."
+  },
+  "5": {
+   "nazev": "Hnutí SOL",
+   "z2022": [
+    1
+   ]
+  },
+  "6": {
+   "nazev": "Restart pro Brno",
+   "z2022": [
+    8
+   ]
+  },
+  "7": {
+   "nazev": "Noví lidovci",
+   "z2022": [
+    6
+   ]
+  },
+  "8": {
+   "nazev": "Motoristé sobě",
+   "z2022": []
+  }
+ },
+ "551058": {
+  "1": {
+   "nazev": "Židenice NAPLNO",
+   "z2022": []
+  },
+  "2": {
+   "nazev": "ANO 2011",
+   "z2022": [
+    2
+   ]
+  },
+  "3": {
+   "nazev": "Židenice-dobrá-adresa.cz (ODS, TOP 09 a nestraníci)",
+   "z2022": [
+    1,
+    7
+   ]
+  },
+  "4": {
+   "nazev": "Restart pro Brno",
+   "z2022": [
+    10
+   ]
+  },
+  "5": {
+   "nazev": "Lidovci a Starostové Blíž lidem (KDU-ČSL s podporou Starostů a nezávislých)",
+   "z2022": [
+    6
+   ]
+  },
+  "6": {
+   "nazev": "PETR KUNC – HLAS PRO ŽIDENICE",
+   "z2022": [
+    4
+   ]
+  },
+  "7": {
+   "nazev": "Piráti a Fakt Brno TU! pro Židenice",
+   "z2022": [
+    8
+   ]
+  },
+  "8": {
+   "nazev": "SPD a nezávislí kandidáti za zelenou pro Židenice",
+   "z2022": [
+    5
+   ]
+  }
+ },
+ "551091": {
+  "1": {
+   "nazev": "Lidovci pro Starý Lískovec",
+   "z2022": [
+    4
+   ]
+  },
+  "2": {
+   "nazev": "STAROSTOVÉ A NEZÁVISLÍ",
+   "z2022": [
+    3
+   ]
+  },
+  "3": {
+   "nazev": "SPD a nezávislí",
+   "z2022": []
+  },
+  "4": {
+   "nazev": "Alternativa pro Lískovec, sdružení nezávislých kandidátů",
+   "z2022": [
+    2
+   ],
+   "pozn": "5 kandidátů z kandidátky Restart pro Brno 2022 → srovnání s Restartem 2022."
+  },
+  "5": {
+   "nazev": "ODS a osobnosti Starého Lískovce s podporou TOP 09",
+   "z2022": [
+    1
+   ]
+  },
+  "6": {
+   "nazev": "ANO 2011",
+   "z2022": []
+  },
+  "7": {
+   "nazev": "Piráti a Zelení",
+   "z2022": [
+    5
+   ]
+  },
+  "8": {
+   "nazev": "Za Lužánky - Jsme z Lískovce!",
+   "z2022": []
+  }
+ },
+ "551112": {
+  "1": {
+   "nazev": "ODS, TOP 09 a nezávislí",
+   "z2022": [
+    2
+   ]
+  },
+  "2": {
+   "nazev": "Tři oříšky pro Lískovec",
+   "z2022": [
+    4
+   ]
+  },
+  "3": {
+   "nazev": "ANO 2011",
+   "z2022": [],
+   "pozn": "Nová kandidátka ANO; 7 kandidátů z Lískoveckého koniklece 2022."
+  },
+  "4": {
+   "nazev": "Noví lidovci pro Lískovec",
+   "z2022": [],
+   "pozn": "KDU-ČSL v roce 2022 kandidovala v koalici SPOLU."
+  },
+  "5": {
+   "nazev": "NOVOLÍSKOVEČTÍ PATRIOTI",
+   "z2022": [
+    3
+   ]
+  }
+ },
+ "551171": {
+  "1": {
+   "nazev": "SPD a nezávislí kandidáti",
+   "z2022": []
+  },
+  "2": {
+   "nazev": "Zelená pro Jundrov",
+   "z2022": [
+    3
+   ]
+  },
+  "3": {
+   "nazev": "Společně pro Jundrov (ODS+nestraníci s podporou TOP 09)",
+   "z2022": [
+    4
+   ]
+  },
+  "4": {
+   "nazev": "Jundrováci",
+   "z2022": [
+    2
+   ]
+  }
+ },
+ "551198": {
+  "1": {
+   "nazev": "Naše Bystrc",
+   "z2022": []
+  },
+  "2": {
+   "nazev": "Zelená pro Bystrc",
+   "z2022": [
+    3
+   ],
+   "pozn": "V roce 2022 společná kandidátka se Piráty a Bystrčáky, kteří letos kandidují samostatně (kandidátka 7) — změnu čti opatrně.",
+   "srovnatelne": false
+  },
+  "3": {
+   "nazev": "Volím Bystrc",
+   "z2022": [
+    7
+   ],
+   "pozn": "7 kandidátů z ČSSD Vaši starostové 2022 → srovnání s ČSSD 2022."
+  },
+  "4": {
+   "nazev": "BYSTRC BLÍŽ LIDEM (LIDOVCI A STAROSTOVÉ)",
+   "z2022": [
+    1
+   ]
+  },
+  "5": {
+   "nazev": "Občanská demokratická strana",
+   "z2022": [
+    5
+   ]
+  },
+  "6": {
+   "nazev": "BYSTRC NAPLNO - koalice Trikolora, PRO, Svobodní",
+   "z2022": []
+  },
+  "7": {
+   "nazev": "Bystrčáci, Piráti, TOP 09 a nezávislí pro Bystrc",
+   "z2022": [],
+   "pozn": "12 kandidátů z naší společné kandidátky 2022 (Zelená pro Bystrc, Piráti a Bystrčáci)."
+  },
+  "8": {
+   "nazev": "SPD a nezávislí",
+   "z2022": [
+    4
+   ]
+  },
+  "9": {
+   "nazev": "Restart pro Brno",
+   "z2022": [
+    2
+   ]
+  },
+  "10": {
+   "nazev": "ANO 2011",
+   "z2022": [
+    6
+   ]
+  }
+ },
+ "551228": {
+  "1": {
+   "nazev": "Restart pro Brno",
+   "z2022": [
+    6
+   ]
+  },
+  "2": {
+   "nazev": "Občanská demokratická strana",
+   "z2022": [
+    5
+   ]
+  },
+  "3": {
+   "nazev": "TOP 09",
+   "z2022": [
+    1
+   ]
+  },
+  "4": {
+   "nazev": "LIDOVCI A STAROSTOVÉ",
+   "z2022": [
+    2
+   ]
+  },
+  "5": {
+   "nazev": "Brnoklidem",
+   "z2022": []
+  },
+  "6": {
+   "nazev": "ANO 2011",
+   "z2022": [
+    3
+   ]
+  },
+  "7": {
+   "nazev": "Zelená pro Komín",
+   "z2022": [
+    7
+   ]
+  }
+ },
+ "551236": {
+  "1": {
+   "nazev": "Občané pro Medlánky",
+   "z2022": [
+    6
+   ]
+  },
+  "2": {
+   "nazev": "Zelené Medlánky",
+   "z2022": [
+    5
+   ]
+  },
+  "3": {
+   "nazev": "SPD a nezávislí",
+   "z2022": []
+  },
+  "4": {
+   "nazev": "Medlánečtí nezávislí a ODS",
+   "z2022": [
+    3
+   ]
+  },
+  "5": {
+   "nazev": "Lidovci",
+   "z2022": [
+    1
+   ]
+  },
+  "6": {
+   "nazev": "Koalice politických stran a hnutí Restart pro Brno",
+   "z2022": [
+    4
+   ]
+  }
+ },
+ "551244": {
+  "1": {
+   "nazev": "Hnutí MARKA VISKOTA",
+   "z2022": [
+    1
+   ],
+   "pozn": "13 kandidátů z ČSSD Vaši starostové 2022 → srovnání s ČSSD 2022."
+  },
+  "2": {
+   "nazev": "ODS, TOP 09 a nezávislí",
+   "z2022": [
+    3
+   ]
+  },
+  "3": {
+   "nazev": "ANO 2011",
+   "z2022": [
+    5
+   ]
+  },
+  "4": {
+   "nazev": "Noví lidovci",
+   "z2022": [
+    4
+   ]
+  },
+  "5": {
+   "nazev": "SPD a nezávislí",
+   "z2022": []
+  },
+  "6": {
+   "nazev": "Piráti a Fakt Brno TU! pro Řečkovice a Mokrou Horu",
+   "z2022": []
+  },
+  "7": {
+   "nazev": "STAROSTOVÉ A NEZÁVISLÍ",
+   "z2022": []
+  },
+  "8": {
+   "nazev": "Restart pro Brno",
+   "z2022": [
+    6
+   ]
+  },
+  "9": {
+   "nazev": "Spolek Za zdravé Řečkovice a Sdružení nestraníků",
+   "z2022": [
+    2
+   ]
+  }
+ },
+ "551252": {
+  "1": {
+   "nazev": "Restart pro Brno",
+   "z2022": [
+    4
+   ]
+  },
+  "2": {
+   "nazev": "ODS a TOP 09",
+   "z2022": [
+    1
+   ]
+  },
+  "3": {
+   "nazev": "Noví lidovci",
+   "z2022": [
+    2
+   ]
+  },
+  "4": {
+   "nazev": "ANO 2011",
+   "z2022": []
+  },
+  "5": {
+   "nazev": "STAROSTOVÉ A NEZÁVISLÍ",
+   "z2022": [
+    6
+   ]
+  },
+  "6": {
+   "nazev": "MOplus",
+   "z2022": []
+  },
+  "7": {
+   "nazev": "PRO Maloměřice a Obřany",
+   "z2022": [
+    3
+   ]
+  }
+ },
+ "551279": {
+  "1": {
+   "nazev": "Vinohrady společně",
+   "z2022": [
+    3
+   ]
+  },
+  "2": {
+   "nazev": "ANO 2011",
+   "z2022": [],
+   "pozn": "Nová kandidátka; 8 kandidátů z Ano pro Vinohrady 2022."
+  },
+  "3": {
+   "nazev": "Plus pro Vinohrady s podporou Brnoklidem",
+   "z2022": [
+    8
+   ]
+  },
+  "4": {
+   "nazev": "Přívětivé Vinohrady",
+   "z2022": []
+  },
+  "5": {
+   "nazev": "Máme rádi Vinohrady + Piráti, Zelení, Starostové a osobnosti",
+   "z2022": [],
+   "pozn": "Nová kandidátka; 9 kandidátů z ČSSD a nezávislí 2022."
+  },
+  "6": {
+   "nazev": "SPOLU PRO VINOHRADY (ODS, KDU-ČSL, TOP 09)",
+   "z2022": [
+    1
+   ]
+  },
+  "7": {
+   "nazev": "RÉVA",
+   "z2022": []
+  },
+  "8": {
+   "nazev": "Pro Vinohrady - SPD, Přísaha a nezávislí",
+   "z2022": [
+    4
+   ]
+  },
+  "9": {
+   "nazev": "ŠANCE PRO VINOHRADY s podporou Starostů",
+   "z2022": [
+    7
+   ]
+  },
+  "10": {
+   "nazev": "Restart pro Brno",
+   "z2022": [
+    2
+   ]
+  }
+ },
+ "551287": {
+  "1": {
+   "nazev": "SPD a nezávislí",
+   "z2022": [
+    3
+   ]
+  },
+  "2": {
+   "nazev": "STAROSTOVÉ A NEZÁVISLÍ",
+   "z2022": [
+    1
+   ]
+  },
+  "3": {
+   "nazev": "Váš starosta a občané pro Líšeň",
+   "z2022": [
+    6
+   ]
+  },
+  "4": {
+   "nazev": "Noví lidovci - srdcem v Líšni",
+   "z2022": [
+    7
+   ]
+  },
+  "5": {
+   "nazev": "Piráti a Fakt Brno TU! pro Líšeň",
+   "z2022": []
+  },
+  "6": {
+   "nazev": "Sousedé z Líšně",
+   "z2022": [
+    4
+   ]
+  },
+  "7": {
+   "nazev": "ANO 2011",
+   "z2022": [
+    5
+   ]
+  },
+  "8": {
+   "nazev": "Restart pro Brno",
+   "z2022": [
+    2
+   ]
+  },
+  "9": {
+   "nazev": "ODS, TOP 09 a nezávislí kandidáti",
+   "z2022": [
+    8
+   ]
+  }
+ },
+ "582786": {
+  "1": {
+   "nazev": "Sociální demokracie",
+   "z2022": [
+    1
+   ]
+  },
+  "2": {
+   "nazev": "Lidovci a Starostové – Brno blíž lidem",
+   "z2022": [
+    5
+   ]
+  },
+  "3": {
+   "nazev": "ZELENÉ BRNO (Zelení, Žít Brno, SEN 21, LES, Volt, Budoucnost, Kruh)",
+   "z2022": [
+    4
+   ]
+  },
+  "4": {
+   "nazev": "ANO 2011",
+   "z2022": [
+    8
+   ]
+  },
+  "5": {
+   "nazev": "Za Lužánky",
+   "z2022": [],
+   "pozn": "Nová kandidátka; mezi kandidáty jsou 4 lidé z kandidátky Pirátů 2022 a 3 ze Zelených a Žít Brno."
+  },
+  "6": {
+   "nazev": "ODS, TOP 09 a nezávislí",
+   "z2022": [
+    11
+   ]
+  },
+  "7": {
+   "nazev": "Restart pro Brno",
+   "z2022": [
+    12
+   ]
+  },
+  "8": {
+   "nazev": "Brnoklidem",
+   "z2022": [],
+   "pozn": "Nová kandidátka; 10 kandidátů v roce 2022 kandidovalo za ANO."
+  },
+  "9": {
+   "nazev": "Motoristé sobě",
+   "z2022": []
+  },
+  "10": {
+   "nazev": "Demokratická strana zelených - ZA PRÁVA ZVÍŘAT, sdružení DSZ - ZA PRÁVA ZVÍŘAT a NK",
+   "z2022": [
+    10
+   ]
+  },
+  "11": {
+   "nazev": "Brno Brňankám a Brňanům! (B3!)",
+   "z2022": [
+    2
+   ]
+  },
+  "12": {
+   "nazev": "PŘÍSAHA občanské hnutí",
+   "z2022": [
+    9
+   ]
+  },
+  "13": {
+   "nazev": "BRNO NAPLNO - koalice Svobodní, Trikolora, PRO",
+   "z2022": [
+    6
+   ]
+  },
+  "14": {
+   "nazev": "Nové Brno",
+   "z2022": []
+  },
+  "15": {
+   "nazev": "Piráti a Fakt Brno TU!",
+   "z2022": [
+    3,
+    14
+   ],
+   "pozn": "Srovnání s Piráty + Fakt Brno 2022 dohromady."
+  },
+  "16": {
+   "nazev": "SPD a nezávislí",
+   "z2022": [
+    7
+   ]
+  }
+ }
+}

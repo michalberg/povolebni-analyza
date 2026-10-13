@@ -1,0 +1,285 @@
+{
+ "volby": "Komunální volby 2026",
+ "datum": "9.–10. 10. 2026",
+ "brno": "582786",
+ "celky": [
+  {
+   "kod": "582786",
+   "nazev": "Brno",
+   "zobrazit": "Brno",
+   "typ": "magistrat",
+   "nase_pct": 8.91,
+   "nase_pct22": 5.97,
+   "nase_mand": 6,
+   "nase_mand22": 3
+  },
+  {
+   "kod": "551198",
+   "nazev": "Brno-Bystrc",
+   "zobrazit": "Bystrc",
+   "typ": "mc",
+   "nase_pct": 8.36,
+   "nase_pct22": 16.69,
+   "nase_mand": 2,
+   "nase_mand22": 5
+  },
+  {
+   "kod": "551171",
+   "nazev": "Brno-Jundrov",
+   "zobrazit": "Jundrov",
+   "typ": "mc",
+   "nase_pct": 34.14,
+   "nase_pct22": 43.58,
+   "nase_mand": 5,
+   "nase_mand22": 7
+  },
+  {
+   "kod": "551228",
+   "nazev": "Brno-Komín",
+   "zobrazit": "Komín",
+   "typ": "mc",
+   "nase_pct": 42.43,
+   "nase_pct22": 42.8,
+   "nase_mand": 8,
+   "nase_mand22": 9
+  },
+  {
+   "kod": "551007",
+   "nazev": "Brno-Královo Pole",
+   "zobrazit": "Královo Pole",
+   "typ": "mc",
+   "nase_pct": 20.59,
+   "nase_pct22": 17.16,
+   "nase_mand": 6,
+   "nase_mand22": 5
+  },
+  {
+   "kod": "551287",
+   "nazev": "Brno-Líšeň",
+   "zobrazit": "Líšeň",
+   "typ": "mc",
+   "nase_pct": 10.65,
+   "nase_pct22": 11.69,
+   "nase_mand": 3,
+   "nase_mand22": 4
+  },
+  {
+   "kod": "551252",
+   "nazev": "Brno-Maloměřice a Obřany",
+   "zobrazit": "Maloměřice a Obřany",
+   "typ": "mc",
+   "nase_pct": 26.42,
+   "nase_pct22": 44.89,
+   "nase_mand": 5,
+   "nase_mand22": 7
+  },
+  {
+   "kod": "551236",
+   "nazev": "Brno-Medlánky",
+   "zobrazit": "Medlánky",
+   "typ": "mc",
+   "nase_pct": 19.8,
+   "nase_pct22": 9.0,
+   "nase_mand": 3,
+   "nase_mand22": 1
+  },
+  {
+   "kod": "551112",
+   "nazev": "Brno-Nový Lískovec",
+   "zobrazit": "Nový Lískovec",
+   "typ": "mc",
+   "nase_pct": 34.28,
+   "nase_pct22": 40.68,
+   "nase_mand": 7,
+   "nase_mand22": 8
+  },
+  {
+   "kod": "551244",
+   "nazev": "Brno-Řečkovice a Mokrá Hora",
+   "zobrazit": "Řečkovice a Mokrá Hora",
+   "typ": "mc",
+   "nase_pct": 22.76,
+   "nase_pct22": 22.11,
+   "nase_mand": 6,
+   "nase_mand22": 5
+  },
+  {
+   "kod": "551031",
+   "nazev": "Brno-sever",
+   "zobrazit": "Sever",
+   "typ": "mc",
+   "nase_pct": 40.03,
+   "nase_pct22": 38.69,
+   "nase_mand": 15,
+   "nase_mand22": 15
+  },
+  {
+   "kod": "551091",
+   "nazev": "Brno-Starý Lískovec",
+   "zobrazit": "Starý Lískovec",
+   "typ": "mc",
+   "nase_pct": 10.41,
+   "nase_pct22": 9.66,
+   "nase_mand": 2,
+   "nase_mand22": 2
+  },
+  {
+   "kod": "550973",
+   "nazev": "Brno-střed",
+   "zobrazit": "Střed",
+   "typ": "mc",
+   "nase_pct": 17.49,
+   "nase_pct22": 21.29,
+   "nase_mand": 9,
+   "nase_mand22": 11
+  },
+  {
+   "kod": "551279",
+   "nazev": "Brno-Vinohrady",
+   "zobrazit": "Vinohrady",
+   "typ": "mc",
+   "nase_pct": 10.47,
+   "nase_pct22": null,
+   "nase_mand": 2,
+   "nase_mand22": null
+  },
+  {
+   "kod": "550990",
+   "nazev": "Brno-Žabovřesky",
+   "zobrazit": "Žabovřesky",
+   "typ": "mc",
+   "nase_pct": 9.48,
+   "nase_pct22": 4.38,
+   "nase_mand": 2,
+   "nase_mand22": 0
+  },
+  {
+   "kod": "551058",
+   "nazev": "Brno-Židenice",
+   "zobrazit": "Židenice",
+   "typ": "mc",
+   "nase_pct": 32.28,
+   "nase_pct22": 25.78,
+   "nase_mand": 10,
+   "nase_mand22": 9
+  }
+ ],
+ "mc": [
+  {
+   "kod": "550973",
+   "nazev": "Střed"
+  },
+  {
+   "kod": "550990",
+   "nazev": "Žabovřesky"
+  },
+  {
+   "kod": "551007",
+   "nazev": "Královo Pole"
+  },
+  {
+   "kod": "551031",
+   "nazev": "Sever"
+  },
+  {
+   "kod": "551058",
+   "nazev": "Židenice"
+  },
+  {
+   "kod": "551066",
+   "nazev": "Černovice"
+  },
+  {
+   "kod": "551074",
+   "nazev": "Jih"
+  },
+  {
+   "kod": "551082",
+   "nazev": "Bohunice"
+  },
+  {
+   "kod": "551091",
+   "nazev": "Starý Lískovec"
+  },
+  {
+   "kod": "551112",
+   "nazev": "Nový Lískovec"
+  },
+  {
+   "kod": "551147",
+   "nazev": "Kohoutovice"
+  },
+  {
+   "kod": "551171",
+   "nazev": "Jundrov"
+  },
+  {
+   "kod": "551198",
+   "nazev": "Bystrc"
+  },
+  {
+   "kod": "551210",
+   "nazev": "Kníničky"
+  },
+  {
+   "kod": "551228",
+   "nazev": "Komín"
+  },
+  {
+   "kod": "551236",
+   "nazev": "Medlánky"
+  },
+  {
+   "kod": "551244",
+   "nazev": "Řečkovice a Mokrá Hora"
+  },
+  {
+   "kod": "551252",
+   "nazev": "Maloměřice a Obřany"
+  },
+  {
+   "kod": "551279",
+   "nazev": "Vinohrady"
+  },
+  {
+   "kod": "551287",
+   "nazev": "Líšeň"
+  },
+  {
+   "kod": "551295",
+   "nazev": "Slatina"
+  },
+  {
+   "kod": "551309",
+   "nazev": "Tuřany"
+  },
+  {
+   "kod": "551317",
+   "nazev": "Chrlice"
+  },
+  {
+   "kod": "551325",
+   "nazev": "Bosonohy"
+  },
+  {
+   "kod": "551368",
+   "nazev": "Žebětín"
+  },
+  {
+   "kod": "551376",
+   "nazev": "Ivanovice"
+  },
+  {
+   "kod": "551406",
+   "nazev": "Jehnice"
+  },
+  {
+   "kod": "551422",
+   "nazev": "Ořešín"
+  },
+  {
+   "kod": "551431",
+   "nazev": "Útěchov"
+  }
+ ]
+}
