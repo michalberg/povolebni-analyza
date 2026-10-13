@@ -773,10 +773,10 @@ async function secKandidati(V, sec) {
     const mapEl = el("div", { class: "map" });
     const panel = el("div", { class: "side-panel" });
     const legendBox = el("div");
-    // Výběr kandidáta: řazeno podle osobních hlasů, s číslem na kandidátce
+    // Výběr kandidáta: řazeno podle čísla na kandidátce
     const candSel = el("select", { class: "cand-sel", "aria-label": "Kandidát" },
-      el("optgroup", { label: "Podle osobních hlasů (v závorce), ✓ = mandát" },
-        byE.map(r => el("option", { value: r.ci }, `${r.c}. ${r.jmeno.replace(/^((?:[A-Za-zÁ-ž]+\.\s?)+)\s*/, "").replace(/,.*$/, "")} (${int(r.E)})${r.mandat ? " ✓" : ""}`))));
+      el("optgroup", { label: "Pořadí na kandidátce · osobní hlasy v závorce · ✓ = mandát" },
+        [...rows].sort((a, b) => a.c - b.c).map(r => el("option", { value: r.ci }, `${r.c}. ${r.jmeno.replace(/^((?:[A-Za-zÁ-ž]+\.\s?)+)\s*/, "").replace(/,.*$/, "")} (${int(r.E)})${r.mandat ? " ✓" : ""}`))));
     candSel.addEventListener("change", () => showCand(rows[+candSel.value]));
     const side = el("div", { class: "side-col" },
       el("label", { class: "cand-lbl" }, el("span", null, "Kandidát"), candSel), panel);
