@@ -524,44 +524,42 @@ function newMap(container) {
   return m;
 }
 
-/* Škála: {color(v), legend} — sekvenční (kvantily) nebo divergentní (symetrická). */
+/* Škály jsou spojité (barva roste plynule s hodnotou), aby 27 % a 35 % nevypadalo stejně. */
+function hexRgb(h) { const n = parseInt(h.slice(1), 16); return [n >> 16, n >> 8 & 255, n & 255]; }
+function ramp(stops, t) {
+  t = Math.max(0, Math.min(1, t));
+  const f = t * (stops.length - 1), k = Math.min(stops.length - 2, Math.floor(f)), u = f - k;
+  const a = hexRgb(stops[k]), b = hexRgb(stops[k + 1]);
+  return `rgb(${a.map((v, j) => Math.round(v + (b[j] - v) * u)).join(",")})`;
+}
 function seqScale(values) {
   const v = values.filter(x => x != null && isFinite(x)).sort((a, b) => a - b);
-  const n = SEQ.length;
-  const br = [];
-  for (let i = 1; i < n; i++) br.push(v.length ? v[Math.min(v.length - 1, Math.floor(i / n * v.length))] : 0);
-  const color = x => {
-    if (x == null || !isFinite(x)) return NODATA[S.theme];
-    let k = 0; while (k < br.length && x > br[k]) k++;
-    return SEQ[k];
-  };
-  return { color, colors: SEQ, breaks: br, min: v[0], max: v[v.length - 1] };
+  const min = v.length ? v[0] : 0, max = v.length ? v[v.length - 1] : 1;
+  const stops = SEQ.slice(1); // nejsvětlejší stupeň by s průhledností splýval s podkladem
+  const color = x => x == null || !isFinite(x) ? NODATA[S.theme] : ramp(stops, max > min ? (x - min) / (max - min) : 0.5);
+  return { color, colors: stops, min, max };
 }
+function divStops() { return [...DIV_NEG, MID[S.theme], ...DIV_POS]; }
 function divScale(values, center = 0, fixed) {
-  const v = values.filter(x => x != null && isFinite(x));
-  let m = fixed || Math.max(...v.map(x => Math.abs(x - center)), 0.0001);
-  if (!fixed) { const s = [...v].map(x => Math.abs(x - center)).sort((a, b) => a - b); m = s[Math.floor(s.length * 0.95)] || m; }
-  const steps = [0.1, 0.35, 0.65, 1].map(f => f * m);
-  const color = x => {
-    if (x == null || !isFinite(x)) return NODATA[S.theme];
-    const d = x - center, a = Math.abs(d);
-    if (a <= steps[0]) return MID[S.theme];
-    let k = 1; while (k < 3 && a > steps[k]) k++;
-    return d > 0 ? DIV_POS[k] : DIV_NEG[3 - k];
-  };
-  const colors = [DIV_NEG[0], DIV_NEG[1], DIV_NEG[2], MID[S.theme], DIV_POS[1], DIV_POS[2], DIV_POS[3]];
-  return { color, colors, div: true, m, center };
+  let m = fixed;
+  if (!m) {
+    const s = values.filter(x => x != null && isFinite(x)).map(x => Math.abs(x - center)).sort((a, b) => a - b);
+    m = s.length ? s[Math.min(s.length - 1, Math.floor(s.length * 0.98))] : 1;
+    m = m || 1;
+  }
+  const color = x => x == null || !isFinite(x) ? NODATA[S.theme] : ramp(divStops(), 0.5 + (x - center) / m / 2);
+  return { color, colors: divStops(), div: true, m, center };
+}
+
+function gradBar(colors) {
+  return el("div", { class: "gb", style: `background:linear-gradient(90deg,${colors.join(",")})` });
 }
 
 function scaleLegend(sc, fmt, title) {
-  let labels;
-  if (sc.div) labels = [fmt(sc.center - sc.m), fmt(sc.center), fmt(sc.center + sc.m)];
-  else labels = [fmt(sc.min), fmt(sc.breaks[Math.floor(sc.breaks.length / 2)]), fmt(sc.max)];
+  const labels = sc.div ? [fmt(sc.center - sc.m), fmt(sc.center), fmt(sc.center + sc.m)] : [fmt(sc.min), fmt((sc.min + sc.max) / 2), fmt(sc.max)];
   return el("div", { class: "scale" },
     el("span", null, title),
-    el("div", null,
-      el("div", { class: "sb" }, sc.colors.map(c => el("i", { style: `background:${c}` }))),
-      el("div", { class: "lab" }, labels.map(l => el("span", null, l)))),
+    el("div", null, gradBar(sc.colors), el("div", { class: "lab" }, labels.map(l => el("span", null, l)))),
     el("span", null, el("i", { style: `display:inline-block;width:14px;height:10px;border:1px solid var(--line);background:${NODATA[S.theme]};vertical-align:middle;margin-right:4px` }), "bez dat"));
 }
 
@@ -578,7 +576,7 @@ function okrskyLayer(map, V, idxs, colorOf, onTip, onClick, opts = {}) {
   let selected = null;
   const layer = L.geoJSON({ type: "FeatureCollection", features: feats }, {
     style: f => ({
-      fillColor: colorOf(lookup.get(f.properties.id)), fillOpacity: opts.opacity ?? 0.82,
+      fillColor: colorOf(lookup.get(f.properties.id)), fillOpacity: opts.opacity ?? 0.6,
       color: S.theme === "dark" ? "#0e0e0e" : "#ffffff", weight: 0.8,
     }),
     onEachFeature: (f, lyr) => {
@@ -635,7 +633,7 @@ function okrsekPanel(V, i) {
 
 function secMapa(V, sec) {
   sec.append(el("p", { class: "lead" },
-    "Výsledky po volebních okrscích. Vyberte kandidátku a ukazatel; kliknutím na okrsek zobrazíte jeho výsledky. Barevné třídy u podílu jsou kvantily (každá třída obsahuje zhruba stejný počet okrsků)."));
+    "Výsledky po volebních okrscích. Vyberte kandidátku a ukazatel; kliknutím na okrsek zobrazíte jeho výsledky. Barva se mění plynule od nejnižší po nejvyšší hodnotu."));
   const ctrl = el("div", { class: "ctrl" });
   const sel = el("select", { "aria-label": "Kandidátka" },
     V.strany.filter(s => s.p >= 1 || s.ours).map(s => el("option", { value: s.por, selected: s.ours ? true : null }, s.zkratka)));
@@ -811,7 +809,7 @@ async function secKandidati(V, sec) {
       legendBox.replaceChildren(el("div", { class: "scale" },
         el("span", null, `Index osobních hlasů (odhad): ${r.jmeno}`),
         el("div", null,
-          el("div", { class: "sb" }, sc.colors.map(c => el("i", { style: `background:${c}` }))),
+          gradBar(sc.colors),
           el("div", { class: "lab" }, el("span", null, "≤ 35"), el("span", null, "100 = průměr"), el("span", null, "≥ 280")))));
       const top = V.idx.filter(i => !V.ok.zvlastni[i]).sort((a, b) => extra[r.ci].get(b) - extra[r.ci].get(a)).slice(0, 10);
       panel.replaceChildren(el("div", null,
@@ -995,22 +993,119 @@ function niceStep(raw) {
 
 /* ---------------------------------------------- MČ vs. magistrát (2 lístky) */
 
+// Kandidátky MČ a magistrátu párujeme podle barevné skupiny (barvy.json);
+// naše kandidátka tvoří vlastní skupinu. Několik kandidátek jedné skupiny se sečte.
+function skupinyDvaListky(V) {
+  const ok = V.ok, Mz = S.celky[BRNO], Mo = Mz.okrsky;
+  const mpos = new Map(Mo.id.map((id, i) => [id, i]));
+  const G = new Map();
+  const add = (s, lvl, ours) => {
+    // „ostatní“ (místní hnutí, malé strany) se nespojují — každá kandidátka zvlášť
+    const g = ours ? "nase" : s.skupina === "ostatni" ? `ostatni:${lvl}:${s.por}` : s.skupina;
+    if (!G.has(g)) G.set(g, { g, mc: [], mag: [], color: ours ? GREEN : barvaStrany(s, false) });
+    G.get(g)[lvl].push(s);
+  };
+  for (const s of V.z.strany) add(s, "mc", s.por === V.z.nase);
+  for (const s of Mz.strany) add(s, "mag", s.por === Mz.nase);
+  const out = [...G.values()].map(x => {
+    const nm = arr => arr.map(s => s.zkratka).join(" + ");
+    x.label = x.g === "nase" ? "Naše kandidátka" : x.mc.length ? nm(x.mc) : nm(x.mag);
+    x.detail = `MČ: ${nm(x.mc) || "nekandiduje"} · město: ${nm(x.mag) || "nekandiduje"}`;
+    x.loc = V.idx.map(i => ok.platne[i] ? x.mc.reduce((a, s) => a + ok.hlasy[s.por][i], 0) / ok.platne[i] * 100 : NaN);
+    x.mg = V.idx.map(i => { const m = mpos.get(ok.id[i]); return Mo.platne[m] ? x.mag.reduce((a, s) => a + Mo.hlasy[s.por][m], 0) / Mo.platne[m] * 100 : NaN; });
+    x.d = x.loc.map((v, k) => v - x.mg[k]);
+    const P = sum(ok.platne, V.idx), PM = V.idx.reduce((a, i) => a + Mo.platne[mpos.get(ok.id[i])], 0);
+    x.L = x.mc.reduce((a, s) => a + sum(ok.hlasy[s.por], V.idx), 0) / P * 100;
+    x.M = x.mag.reduce((a, s) => a + V.idx.reduce((b, i) => b + Mo.hlasy[s.por][mpos.get(ok.id[i])], 0), 0) / PM * 100;
+    x.D = x.L - x.M;
+    return x;
+  });
+  return out.filter(x => x.L >= 0.5 || x.M >= 0.5);
+}
+
 function secDvaListky(V, sec) {
   const ok = V.ok;
   const Mz = S.celky[BRNO];
   const magNase = Mz.strany.find(s => s.por === Mz.nase);
   sec.append(el("p", { class: "lead" },
-    `Ve stejné volební místnosti dostali voliči dva lístky. Porovnání podílu naší kandidátky do zastupitelstva MČ (${V.nase.zkratka}) s podílem ${magNase.zkratka} do zastupitelstva města ve stejných okrscích ukazuje, kde táhne místní kandidátka víc než celoměstská značka a naopak.`));
-  const loc = V.idx.map(i => ok.platne[i] ? ok.hlasy[V.z.nase][i] / ok.platne[i] * 100 : NaN);
-  const mag = V.idx.map(i => ok.mag_platne[i] ? ok.mag_nase[i] / ok.mag_platne[i] * 100 : NaN);
-  const L = V.nase.p;
-  const M = sum(ok.mag_nase, V.idx) / sum(ok.mag_platne, V.idx) * 100;
+    `Ve stejné volební místnosti dostali voliči dva lístky. Srovnáváme podíl naší kandidátky do zastupitelstva MČ (${V.nase.zkratka}) s podílem ${magNase.zkratka} do zastupitelstva města ve stejných okrscích — a u ostatních stran totéž, abychom viděli, odkud se naše hlasy navíc pravděpodobně berou: od stran, které jsou na místním lístku slabší než na celoměstském.`));
+  const G = skupinyDvaListky(V);
+  const nase = G.find(x => x.g === "nase");
+  const w = V.idx.map(i => ok.zvlastni[i] ? 0 : ok.platne[i]);
   sec.append(el("div", { class: "tiles" },
-    el("div", { class: "tile ours" }, el("span", { class: "lbl" }, "Kandidátka do MČ"), el("span", { class: "val" }, NF2.format(L), el("small", null, "%"))),
-    el("div", { class: "tile" }, el("span", { class: "lbl" }, `${magNase.zkratka} do města`), el("span", { class: "val" }, NF2.format(M), el("small", null, "%"))),
-    el("div", { class: "tile" }, el("span", { class: "lbl" }, "Rozdíl"), el("span", { class: "val" }, pp(L - M)),
-      el("span", { class: "d" }, L > M ? "místní kandidátka táhne víc" : "celoměstská značka táhne víc"))));
-  const diff = new Map(V.idx.map((i, k) => [i, ok.zvlastni[i] ? null : loc[k] - mag[k]]));
+    el("div", { class: "tile ours" }, el("span", { class: "lbl" }, "Kandidátka do MČ"), el("span", { class: "val" }, NF2.format(nase.L), el("small", null, "%"))),
+    el("div", { class: "tile" }, el("span", { class: "lbl" }, `${magNase.zkratka} do města`), el("span", { class: "val" }, NF2.format(nase.M), el("small", null, "%"))),
+    el("div", { class: "tile" }, el("span", { class: "lbl" }, "Rozdíl"), el("span", { class: "val" }, pp(nase.D)),
+      el("span", { class: "d" }, nase.D > 0 ? "místní kandidátka táhne víc" : "celoměstská značka táhne víc"))));
+
+  // 1) Odkud jsou hlasy navíc — rozdíl MČ − město po skupinách + korelace s naším rozdílem
+  for (const x of G) x.r = x.g === "nase" ? null : wcorr(nase.d, x.d, w);
+  const ostatni = G.filter(x => x.g !== "nase");
+  const zdroje = ostatni.filter(x => (nase.D >= 0 ? x.D < 0 : x.D > 0)).sort((a, b) => nase.D >= 0 ? a.D - b.D : b.D - a.D);
+  const sumZ = zdroje.reduce((a, x) => a + Math.abs(x.D), 0);
+  const maxAbs = Math.max(...G.map(x => Math.abs(x.D)), 0.5);
+  sec.append(el("h3", { style: "margin:14px 0 4px" }, nase.D >= 0 ? "Kde jsou naše hlasy navíc" : "Kam odcházejí naši voliči na místním lístku"));
+  sec.append(el("p", { class: "note", style: "margin:0 0 10px" },
+    "Rozdíl podílu MČ − město za celou MČ (p. b.). Strany vlevo mají na místním lístku méně než na celoměstském. Korelace r: jak úzce rozdíl strany souvisí po okrscích s naším rozdílem — výrazně záporná hodnota = kde máme v MČ víc navíc, ona má víc méně (pravděpodobný zdroj)."));
+  const rows = el("div", { class: "dv" });
+  for (const x of [...G].sort((a, b) => a.D - b.D)) {
+    const wd = Math.abs(x.D) / maxAbs * 50;
+    const row = el("div", { class: "dv-row" + (x.g === "nase" ? " ours" : "") },
+      el("div", { class: "nm" }, el("i", { class: "sw", style: `background:${x.color}` }), el("span", null, x.label),
+        !x.mc.length ? el("em", null, " (jen město)") : !x.mag.length ? el("em", null, " (jen MČ)") : null),
+      el("div", { class: "dv-tr" }, el("div", { class: "dv-mid" }),
+        el("div", { class: "dv-b", style: `background:${x.color};${x.D >= 0 ? `left:50%;width:${wd}%` : `left:${50 - wd}%;width:${wd}%`}` })),
+      el("div", { class: "v" }, el("b", null, pp(x.D)), el("span", { class: "m" }, ` MČ ${pct(x.L)} · město ${pct(x.M)}`)),
+      el("div", { class: "rr" }, x.r == null ? "" : `r ${r2(x.r)}`));
+    row.addEventListener("pointermove", ev => tip.show(ev, el("div", null, el("b", null, pp(x.D)), " ", x.label), el("div", { class: "m" }, x.detail),
+      x.r != null && el("div", { class: "m" }, `Korelace s naším rozdílem po okrscích: ${r2(x.r)}`)));
+    row.addEventListener("pointerleave", tip.hide);
+    rows.append(row);
+  }
+  sec.append(rows);
+  const txt = [];
+  if (zdroje.length) txt.push(el("li", null, nase.D >= 0 ? "Náš náskok v MČ (" : "Naše ztráta v MČ (", el("b", null, pp(nase.D)),
+    ") odpovídá hlavně tomu, že na místním lístku jsou " + (nase.D >= 0 ? "slabší " : "silnější "),
+    ...zdroje.slice(0, 3).flatMap((x, k) => [k ? ", " : "", el("b", null, x.label), ` (${pp(x.D)}, tj. ~${int(Math.abs(x.D) / sumZ * 100)} % rozdílů)`]), "."));
+  const rel = ostatni.filter(x => x.r != null).sort((a, b) => a.r - b.r);
+  if (rel.length && rel[0].r < -0.2) txt.push(el("li", null, "Po okrscích nejtěsněji souvisí s naším náskokem pokles ", el("b", null, rel[0].label),
+    ` (r ${r2(rel[0].r)}): kde máme v MČ víc navíc, mají oni na místním lístku víc méně — nejpravděpodobnější zdroj „rozdělených“ voličů.`));
+  else if (rel.length) txt.push(el("li", null, "Po okrscích náš rozdíl s žádnou stranou výrazně nesouvisí — hlasy navíc jsou spíš rozprostřené (osobnosti, místní témata)."));
+  if (!rel.length) txt.push(el("li", null, "Korelace po okrscích nelze při malém počtu okrsků spočítat."));
+  txt.push(el("li", { class: "m" }, "Jde o odhad z okrskových součtů: neříká, jak hlasovali konkrétní voliči, a místní lístek má jiný počet křížků než celoměstský (podíly jsou ale srovnatelné)."));
+  sec.append(el("div", { class: "text", style: "margin-top:10px" }, el("ul", null, txt)));
+
+  // 2) Okrsky: MČ vs. město pro naši kandidátku + kdo je v okrsku na MČ lístku slabší
+  sec.append(el("h3", { style: "margin:18px 0 4px" }, "Po okrscích"));
+  sec.append(el("p", { class: "note", style: "margin:0 0 8px" }, "Prázdné kolečko = naše kandidátka do města, plné = do MČ. Vpravo strany, které jsou v daném okrsku na místním lístku nejslabší proti celoměstskému."));
+  const order = V.idx.map((i, k) => ({ i, k })).filter(o => !ok.zvlastni[o.i] && isFinite(nase.loc[o.k]))
+    .sort((a, b) => nase.loc[b.k] - nase.loc[a.k]);
+  const mx = Math.ceil(Math.max(...order.map(o => Math.max(nase.loc[o.k], nase.mg[o.k]))) / 5) * 5;
+  const X = v => `${v / mx * 100}%`;
+  const db = el("div", { class: "db db2" });
+  const kdoMene = k => ostatni.filter(x => isFinite(x.d[k]) && x.d[k] < -0.5).sort((a, b) => a.d[k] - b.d[k]).slice(0, 2);
+  for (const { i, k } of order) {
+    const a = nase.mg[k], b = nase.loc[k], lo = Math.min(a, b), hi = Math.max(a, b);
+    const row = el("div", { class: "db-row" },
+      el("div", { class: "nm", title: ok.ulice[i] }, okrsekLabel(V, i)),
+      el("div", { class: "tr" },
+        el("div", { class: "ln", style: `left:${X(lo)};width:calc(${X(hi)} - ${X(lo)})` }),
+        el("div", { class: "d22", style: `left:${X(a)}` }),
+        el("div", { class: "d26", style: `left:${X(b)};background:${GREEN}` })),
+      el("div", { class: "v" }, el("b", null, pct(b)), " ", el("span", { class: "m" }, `/ ${pct(a)}`), " ",
+        el("span", { class: "dlt " + dltClass(b - a) }, pp(b - a))),
+      el("div", { class: "who" }, kdoMene(k).map(x => `${x.label} ${pp(x.d[k])}`).join(", ")));
+    row.addEventListener("click", () => { panel.replaceChildren(panelDva(V, G, i, k)); mapEl.scrollIntoView({ behavior: "smooth", block: "center" }); });
+    db.append(row);
+  }
+  const ticks = [];
+  for (let t = 0; t <= mx; t += mx > 20 ? 10 : 5) ticks.push(el("span", { style: `left:${X(t)}` }, `${t} %`));
+  db.append(el("div", { class: "db-axis" }, el("span"), el("div", { class: "ax" }, ticks), el("span"), el("span")));
+  sec.append(db);
+
+  // 3) Mapa rozdílu
+  sec.append(el("h3", { style: "margin:18px 0 6px" }, "Mapa rozdílu MČ − město (naše kandidátka)"));
+  const diff = new Map(V.idx.map((i, k) => [i, ok.zvlastni[i] ? null : nase.d[k]]));
   const sc = divScale([...diff.values()], 0);
   const mapEl = el("div", { class: "map" });
   const panel = el("div", { class: "side-panel" });
@@ -1020,18 +1115,26 @@ function secDvaListky(V, sec) {
   okrskyLayer(map, V, V.idx, i => sc.color(diff.get(i)), i => {
     const k = V.idx.indexOf(i);
     return [el("div", null, el("b", null, pp(diff.get(i))), " MČ − město"), el("div", null, okrsekLabel(V, i)),
-      el("div", { class: "m" }, `MČ ${pct(loc[k])} · město ${pct(mag[k])}`)];
-  }, i => panel.replaceChildren(okrsekPanel(V, i)));
-  const ranked = V.idx.filter(i => diff.get(i) != null).sort((a, b) => diff.get(b) - diff.get(a));
-  const li = i => el("li", null, `${okrsekLabel(V, i)} — `, el("b", null, pp(diff.get(i))));
-  panel.replaceChildren(el("div", null, el("h3", null, "Kde je rozdíl největší"),
-    el("p", { style: "margin:8px 0 4px;font-weight:700" }, "Místní kandidátka silnější"), el("ol", { style: "margin:0;padding-left:20px" }, ranked.slice(0, 5).map(li)),
-    el("p", { style: "margin:10px 0 4px;font-weight:700" }, "Celoměstská kandidátka silnější"), el("ol", { style: "margin:0;padding-left:20px" }, ranked.slice(-5).reverse().map(li))));
+      el("div", { class: "m" }, `MČ ${pct(nase.loc[k])} · město ${pct(nase.mg[k])}`)];
+  }, i => panel.replaceChildren(panelDva(V, G, i, V.idx.indexOf(i))));
+  panel.replaceChildren(el("div", null, el("h3", null, "Detail okrsku"),
+    el("p", { class: "muted" }, "Klikněte na okrsek v mapě nebo v seznamu výše: uvidíte podíl každé strany na místním a celoměstském lístku.")));
   setTimeout(() => map.invalidateSize(), 50);
-  const r = wcorr(loc, mag, V.idx.map(i => ok.zvlastni[i] ? 0 : ok.platne[i]));
-  sec.append(el("p", { class: "note" }, r == null
-    ? "Korelaci obou výsledků nelze při malém počtu okrsků spočítat."
-    : `Korelace výsledků obou kandidátek po okrscích: ${r2(r)} (${r > 0.6 ? "obě kandidátky jsou silné ve stejných místech" : r > 0.3 ? "částečně stejná místa" : "místní kandidátka oslovuje jinde než celoměstská"}).`));
+}
+
+function panelDva(V, G, i, k) {
+  const rows = [...G].filter(x => isFinite(x.loc[k]) || isFinite(x.mg[k])).sort((a, b) => (b.loc[k] || 0) - (a.loc[k] || 0));
+  return el("div", null,
+    el("h3", null, okrsekLabel(V, i)),
+    el("div", { class: "muted" }, V.ok.ulice[i] || ""),
+    el("table", null,
+      el("thead", null, el("tr", null, el("td", { class: "muted" }, "Strana"), el("td", { class: "r muted" }, "MČ"), el("td", { class: "r muted" }, "město"), el("td", { class: "r muted" }, "rozdíl"))),
+      el("tbody", null, rows.map(x => el("tr", null,
+        el("td", null, el("i", { class: "sw", style: `display:inline-block;margin-right:6px;background:${x.color}` }), x.g === "nase" ? el("b", null, x.label) : x.label),
+        el("td", { class: "r" }, x.mc.length ? pct(x.loc[k]) : "–"),
+        el("td", { class: "r" }, x.mag.length ? pct(x.mg[k]) : "–"),
+        el("td", { class: "r" }, el("span", { class: "dlt " + dltClass(x.d[k]) }, pp(x.d[k]))))))),
+    el("p", { class: "muted", style: "margin-top:8px" }, "„–“ = kandidátka na daném lístku nekandiduje. Kandidátky jsou spárované podle barevných skupin stran (např. ODS a TOP 09 kandidující v MČ zvlášť se sečtou)."));
 }
 
 /* ----------------------------------------------------------- interní */
@@ -1155,7 +1258,7 @@ function secCoDelat(V, sec) {
     const p = prById.get(V.ok.id[i]);
     return [el("div", null, el("b", null, p ? p.typ : "–")), el("div", null, okrsekLabel(V, i)),
       p && el("div", { class: "m" }, `podíl ${pct(p.pct)} · účast ${pct(p.ucast)} · potenciál ${int(p.potencial)} voličů (${p.poradi}. místo)`)];
-  }, i => panel.replaceChildren(okrsekPanel(V, i)), { opacity: 0.75 });
+  }, i => panel.replaceChildren(okrsekPanel(V, i)), { opacity: 0.6 });
   function drawChips() {
     chips.replaceChildren(...Object.keys(TYPY).filter(t => counts[t]).map(t => {
       const b = el("button", { type: "button", class: t === active ? "on" : null }, `${t} (${counts[t]})`);

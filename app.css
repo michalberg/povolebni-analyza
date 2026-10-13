@@ -161,6 +161,7 @@ details.tv[open] summary{margin-bottom:8px}
 .side-panel td{padding:3px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
 .side-panel td.r{text-align:right}
 .scale{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:600;margin-top:8px;flex-wrap:wrap}
+.scale .gb{width:240px;height:10px;border-radius:2px}
 .scale .sb{display:flex}
 .scale .sb i{width:34px;height:10px;display:block}
 .scale .sb i+i{margin-left:2px}
@@ -203,3 +204,27 @@ details.tv[open] summary{margin-bottom:8px}
 
 .foot{max-width:1240px;margin:0 auto;padding:16px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
 .err{background:#e3494822;border-radius:8px;padding:14px}
+
+/* ---------- MČ vs. město ---------- */
+.dv{display:flex;flex-direction:column;gap:2px}
+.dv-row{display:grid;grid-template-columns:minmax(140px,230px) minmax(0,1fr) 230px 64px;gap:12px;align-items:center;padding:4px 6px;border-radius:6px}
+.dv-row:hover{background:var(--soft)}
+.dv-row.ours .nm{font-weight:900}
+.dv-row .nm{font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center;min-width:0}
+.dv-row .nm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dv-row .nm em{font-style:normal;color:var(--muted);font-size:12px;white-space:nowrap}
+.dv-tr{position:relative;height:16px}
+.dv-mid{position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--muted)}
+.dv-b{position:absolute;top:2px;height:12px;border-radius:3px}
+.dv-row .v{font-size:14px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.dv-row .m,.db2 .m{color:var(--muted);font-size:12px}
+.dv-row .rr{font-size:13px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.db2 .db-row,.db2 .db-axis{grid-template-columns:230px minmax(0,1fr) 170px 260px}
+.db2 .db-row .nm{font-size:13px}
+.db2 .who{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:900px){
+  .dv-row{grid-template-columns:minmax(0,1fr) 150px;grid-template-areas:"nm v" "tr tr"}
+  .dv-row .nm{grid-area:nm}.dv-row .v{grid-area:v}.dv-tr{grid-area:tr}.dv-row .rr{display:none}
+  .db2 .db-row,.db2 .db-axis{grid-template-columns:120px minmax(0,1fr) 120px}
+  .db2 .who{display:none}
+}
